@@ -73,11 +73,24 @@
       this.saveAll();
     },
 
-    saveAll() {
+    saveLocallyOnly() {
       localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(this.cart));
       localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(this.settings));
       localStorage.setItem(STORAGE_KEYS.HISTORY_DB, JSON.stringify(this.historyDb));
       localStorage.setItem(STORAGE_KEYS.TRIP_HISTORY, JSON.stringify(this.tripHistory));
+    },
+
+    saveAll() {
+      this.saveLocallyOnly();
+      // Picu sinkronisasi ke Firebase Cloud Firestore
+      window.dispatchEvent(new CustomEvent('smartgrocery:save', {
+        detail: {
+          cart: this.cart,
+          settings: this.settings,
+          historyDb: this.historyDb,
+          tripHistory: this.tripHistory
+        }
+      }));
     },
 
     resetToDemoData() {
@@ -121,7 +134,9 @@
     'upload': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>',
     'x': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
     'trending-down': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>',
-    'sparkles': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>'
+    'sparkles': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>',
+    'cloud-upload': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v8"/><path d="m4 14.89 4.14-4.14a2 2 0 0 1 2.83 0L12 11.75"/><path d="m14 13.75 1.03-1.03a2 2 0 0 1 2.83 0L20 14.89"/><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><path d="m16 16-4-4-4 4"/></svg>',
+    'cloud': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>'
   };
 
   function refreshIcons() {
@@ -1354,6 +1369,20 @@
       renderReferenceDbList(searchRefInput.value);
     });
 
+    // Firebase Cloud Sync manual trigger
+    const btnSync = document.getElementById('btnSyncFirebase');
+    if (btnSync) {
+      btnSync.addEventListener('click', () => {
+        SoundHaptic.playClick();
+        if (window.FirebaseSync && typeof window.FirebaseSync.pushLocalToCloud === 'function') {
+          window.FirebaseSync.pushLocalToCloud();
+          showToast('Menyinkronkan data ke Cloud Firestore...', 'cloud-upload');
+        } else {
+          showToast('Data tersimpan aman di lokal', 'check');
+        }
+      });
+    }
+
     // Export / Import
     document.getElementById('btnExportData').addEventListener('click', () => {
       const exportObj = {
@@ -1447,6 +1476,10 @@
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
   }
+
+  // Expose global for Firebase sync module
+  window.AppState = AppState;
+  window.renderAllUI = renderAll;
 
   // Initialize Application on DOM Ready
   document.addEventListener('DOMContentLoaded', () => {

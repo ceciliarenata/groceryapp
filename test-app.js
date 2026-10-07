@@ -47,6 +47,7 @@ async function runAllTests() {
   await testEndpoint('/js/comparator.js', 200, 'application/javascript');
   await testEndpoint('/js/seed-data.js', 200, 'application/javascript');
   await testEndpoint('/js/sound-haptic.js', 200, 'application/javascript');
+  await testEndpoint('/js/firebase-sync.js', 200, 'application/javascript');
   await testEndpoint('/manifest.json', 200, 'application/json');
   await testEndpoint('/icons/icon.svg', 200, 'image/svg+xml');
   await testEndpoint('/icons/icon-192.png', 200, 'image/png');

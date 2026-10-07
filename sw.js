@@ -9,6 +9,7 @@ const STATIC_ASSETS = [
   './js/comparator.js',
   './js/sound-haptic.js',
   './js/app.js',
+  './js/firebase-sync.js',
   './icons/icon.svg',
   './icons/icon-192.png',
   './icons/icon-512.png'

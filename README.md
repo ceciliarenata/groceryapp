@@ -54,3 +54,23 @@ Untuk memasang ke smartphone (PWA):
 1. Buka `http://localhost:3000` (atau IP lokal komputer Anda, misal `http://192.168.1.X:3000`) di browser Chrome (Android) atau Safari (iOS).
 2. Pilih menu browser **"Tambahkan ke Layar Utama" (Add to Home Screen)**.
 3. Aplikasi akan terpasang di smartphone Anda sebagai aplikasi *native* mandiri tanpa address bar browser.
+
+---
+
+## ☁️ Integrasi Firebase Cloud Firestore
+
+Aplikasi telah terhubung ke Firebase project `groceryapp-b84e9` menggunakan arsitektur **Hybrid Offline-First Sync**:
+- **Koleksi Firestore**: `grocery_users/{userId}`
+- **Data Tersinkron**: Keranjang aktif (`cart`), Pengaturan dompet (`settings`), Database harga patokan (`historyDb`), dan Riwayat belanja (`tripHistory`).
+- **Indikator Status**: Header aplikasi memiliki badge cloud status otomatis (`Tersambung (Online)`, `Menyinkronkan...`, atau `Mode Offline (Lokal)`).
+- **Aturan Firestore (Security Rules)**: Pastikan di Firebase Console -> Firestore Database -> Rules disetel mengizinkan baca & tulis untuk pengujian:
+  ```javascript
+  rules_version = '2';
+  service cloud.firestore {
+    match /databases/{database}/documents {
+      match /grocery_users/{userId} {
+        allow read, write: if true;
+      }
+    }
+  }
+  ```

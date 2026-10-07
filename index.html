@@ -62,6 +62,10 @@
         </div>
       </div>
       <div class="header-actions">
+        <div class="cloud-sync-badge status-connecting" id="cloudSyncStatus" title="Status Sinkronisasi Firebase Firestore">
+          <span class="cloud-dot" id="cloudStatusDot"></span>
+          <span id="cloudStatusText">Firebase</span>
+        </div>
         <button class="btn-icon-header active" id="btnToggleSound" title="Efek Suara Aktif">
           <i data-lucide="volume-2" id="soundIcon"></i>
         </button>
@@ -240,13 +244,16 @@
           <!-- Injected items -->
         </div>
 
-        <!-- Export / Import Action Buttons -->
+        <!-- Export / Import & Cloud Sync Action Buttons -->
         <div style="display: flex; gap: 8px; margin-top: 20px;">
+          <button class="btn-trip-action" id="btnSyncFirebase" style="border-color: rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.08);">
+            <i data-lucide="cloud-upload" style="width: 14px; height: 14px; color: #38bdf8;"></i> Sinkron Cloud
+          </button>
           <button class="btn-trip-action" id="btnExportData">
-            <i data-lucide="download" style="width: 14px; height: 14px;"></i> Ekspor Data
+            <i data-lucide="download" style="width: 14px; height: 14px;"></i> Ekspor
           </button>
           <button class="btn-trip-action" id="btnImportData">
-            <i data-lucide="upload" style="width: 14px; height: 14px;"></i> Impor Data
+            <i data-lucide="upload" style="width: 14px; height: 14px;"></i> Impor
           </button>
           <input type="file" id="fileImportInput" accept=".json" style="display: none;">
         </div>
@@ -655,6 +662,8 @@
   <script src="./js/comparator.js"></script>
   <script src="./js/sound-haptic.js"></script>
   <script src="./js/app.js"></script>
+  <!-- Firebase Cloud Firestore Hybrid Sync -->
+  <script type="module" src="./js/firebase-sync.js"></script>
 
   <!-- PWA Service Worker Registration -->
   <script>
