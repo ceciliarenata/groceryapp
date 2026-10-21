@@ -2,7 +2,9 @@
  * SMART GROCERY TRACKER - COMPLETE FRONTEND CONTROLLER
  * 
  * Features:
- * - Secure Token-based Authentication & Route Protection
+ * - Multi-Device Independent Authentication & Data Isolation
+ * - Cash on Hand Wallet ("Uang Belanja yang Kita Pegang")
+ * - Automatic Cash Deduction after Checkout / Kasir
  * - Realtime Cross-Device Server-Sent Events (SSE) Synchronization
  * - Complete CRUD Operations with Optimistic UI updates
  * - Dynamic Dashboard, Metrics, & Category Spending Breakdown
@@ -21,6 +23,10 @@ const App = {
     alert_caution_percent: 75,
     alert_danger_percent: 90
   },
+  wallet: {
+    initial_cash: 500000,
+    current_cash: 500000
+  },
   history: [],
   activeTab: 'tabDashboard',
   filter: {
@@ -31,6 +37,8 @@ const App = {
   itemToDelete: null,
   sseEventSource: null
 };
+
+let walletModalMode = 'set'; // 'set' | 'add'
 
 // ============================================================================
 // FORMATTING HELPERS
@@ -111,7 +119,6 @@ async function api(path, options = {}) {
     const res = await fetch(path, { ...options, headers });
     
     if (res.status === 401) {
-      // Session expired or unauthenticated
       handleSessionExpired();
       throw new Error('Sesi tidak valid atau telah berakhir. Silakan login kembali.');
     }
@@ -134,7 +141,7 @@ function handleSessionExpired() {
     App.sseEventSource.close();
     App.sseEventSource = null;
   }
-  updateAuthUI();
+  renderHeaderUser();
   openAuthModal('login');
 }
 
@@ -169,7 +176,6 @@ function initRealtimeSync() {
         if (badge) badge.className = 'sync-badge syncing';
         if (badgeText) badgeText.textContent = 'Menyinkronkan...';
 
-        // Refresh state from server
         fetchDataSilently().then(() => {
           setTimeout(() => {
             if (badge) badge.className = 'sync-badge';
@@ -198,15 +204,17 @@ async function fetchAllData() {
   if (!App.token) return;
 
   try {
-    const [itemsRes, budgetRes, historyRes] = await Promise.all([
+    const [itemsRes, budgetRes, historyRes, walletRes] = await Promise.all([
       api('/api/grocery/items'),
       api('/api/grocery/budget'),
-      api('/api/grocery/history')
+      api('/api/grocery/history'),
+      api('/api/grocery/wallet')
     ]);
 
     App.items = itemsRes.items || [];
     if (budgetRes.budget) App.budget = budgetRes.budget;
     App.history = historyRes.history || [];
+    if (walletRes.wallet) App.wallet = walletRes.wallet;
 
     renderAllViews();
   } catch (err) {
@@ -218,15 +226,17 @@ async function fetchAllData() {
 async function fetchDataSilently() {
   if (!App.token) return;
   try {
-    const [itemsRes, budgetRes, historyRes] = await Promise.all([
+    const [itemsRes, budgetRes, historyRes, walletRes] = await Promise.all([
       api('/api/grocery/items'),
       api('/api/grocery/budget'),
-      api('/api/grocery/history')
+      api('/api/grocery/history'),
+      api('/api/grocery/wallet')
     ]);
 
     App.items = itemsRes.items || [];
     if (budgetRes.budget) App.budget = budgetRes.budget;
     App.history = historyRes.history || [];
+    if (walletRes.wallet) App.wallet = walletRes.wallet;
 
     renderAllViews();
   } catch (err) {
@@ -240,6 +250,7 @@ async function fetchDataSilently() {
 function renderAllViews() {
   renderHeaderUser();
   renderDashboard();
+  renderWalletUI();
   renderShoppingList();
   renderBudgetSettings();
   renderHistory();
@@ -264,7 +275,7 @@ function renderHeaderUser() {
 }
 
 // ----------------------------------------------------------------------------
-// 1. DASHBOARD VIEW
+// 1. DASHBOARD & WALLET VIEW
 // ----------------------------------------------------------------------------
 function renderDashboard() {
   const totalItems = App.items.length;
@@ -366,6 +377,94 @@ function renderDashboard() {
   renderCategoryBreakdown(totalCost);
 }
 
+// ----------------------------------------------------------------------------
+// FITUR WAJIB: UANG BELANJA YANG DIPEGANG (WALLET & CASH ON HAND)
+// ----------------------------------------------------------------------------
+function renderWalletUI() {
+  const currentCash = Number(App.wallet.current_cash) || 0;
+  const initialCash = Number(App.wallet.initial_cash) || currentCash;
+  const totalCartCost = App.items.reduce((acc, it) => acc + (Number(it.quantity) || 1) * (Number(it.price) || 0), 0);
+  const remainingCash = currentCash - totalCartCost;
+  const usedCashPercent = currentCash > 0 ? Math.round((totalCartCost / currentCash) * 100) : 0;
+
+  // 1. Update Dashboard Wallet Card
+  const elDashCash = document.getElementById('dashWalletCash');
+  const elDashRemaining = document.getElementById('dashWalletRemaining');
+  const elDashFill = document.getElementById('dashWalletProgressFill');
+  const elDashPctText = document.getElementById('dashWalletPercentText');
+  const elDashInitialInfo = document.getElementById('dashWalletInitialInfo');
+  const elDashStatusBadge = document.getElementById('dashWalletStatusBadge');
+  const elDashDeficitBanner = document.getElementById('dashWalletDeficitBanner');
+  const elDashDeficitMsg = document.getElementById('dashWalletDeficitMsg');
+
+  if (elDashCash) elDashCash.textContent = formatRupiah(currentCash);
+  if (elDashRemaining) {
+    elDashRemaining.textContent = formatRupiah(remainingCash);
+    elDashRemaining.className = `budget-stat-val ${remainingCash >= 0 ? 'safe' : 'danger'}`;
+  }
+  if (elDashInitialInfo) elDashInitialInfo.textContent = `Modal Kas Awal: ${formatRupiah(initialCash)}`;
+  if (elDashPctText) elDashPctText.textContent = `${usedCashPercent}% Terpakai Belanja`;
+
+  if (elDashFill) {
+    elDashFill.style.width = `${Math.min(100, usedCashPercent)}%`;
+    elDashFill.className = `budget-gauge-fill ${remainingCash >= 0 ? (usedCashPercent >= 80 ? 'gauge-caution' : 'gauge-safe') : 'gauge-danger'}`;
+  }
+
+  if (elDashStatusBadge) {
+    if (remainingCash < 0) {
+      elDashStatusBadge.className = 'budget-status-badge badge-danger';
+      elDashStatusBadge.textContent = '🚨 Uang Kurang!';
+    } else if (usedCashPercent >= 80) {
+      elDashStatusBadge.className = 'budget-status-badge badge-caution';
+      elDashStatusBadge.textContent = '⚠️ Uang Menipis';
+    } else {
+      elDashStatusBadge.className = 'budget-status-badge badge-safe';
+      elDashStatusBadge.textContent = '● Uang Cukup';
+    }
+  }
+
+  if (elDashDeficitBanner && elDashDeficitMsg) {
+    if (remainingCash < 0) {
+      elDashDeficitBanner.style.display = 'flex';
+      elDashDeficitMsg.textContent = `Peringatan Defisit: Uang belanja yang Anda pegang kurang ${formatRupiah(Math.abs(remainingCash))}! Kurangi barang atau tambah uang kas.`;
+    } else {
+      elDashDeficitBanner.style.display = 'none';
+    }
+  }
+
+  // 2. Update Shopping List Cash Tracker Bar
+  const elShopCash = document.getElementById('shopBarCashHolding');
+  const elShopCart = document.getElementById('shopBarCartTotal');
+  const elShopRemaining = document.getElementById('shopBarCashRemaining');
+  const elShopDeficitAlert = document.getElementById('shoppingCashDeficitAlert');
+  const elShopDeficitMsg = document.getElementById('shoppingCashDeficitMsg');
+
+  if (elShopCash) elShopCash.textContent = formatRupiah(currentCash);
+  if (elShopCart) elShopCart.textContent = formatRupiah(totalCartCost);
+  if (elShopRemaining) {
+    elShopRemaining.textContent = formatRupiah(remainingCash);
+    elShopRemaining.style.color = remainingCash >= 0 ? 'var(--primary-600)' : 'var(--accent-rose)';
+  }
+
+  if (elShopDeficitAlert && elShopDeficitMsg) {
+    if (remainingCash < 0) {
+      elShopDeficitAlert.style.display = 'flex';
+      elShopDeficitMsg.textContent = `🚨 Peringatan Defisit: Total belanjaan (${formatRupiah(totalCartCost)}) melebihi uang kas yang Anda pegang (${formatRupiah(currentCash)}) sebesar ${formatRupiah(Math.abs(remainingCash))}!`;
+    } else {
+      elShopDeficitAlert.style.display = 'none';
+    }
+  }
+
+  // 3. Update Checkout Modal Preview
+  const elCheckCashBefore = document.getElementById('checkoutCashBefore');
+  const elCheckCashAfter = document.getElementById('checkoutCashAfter');
+  if (elCheckCashBefore) elCheckCashBefore.textContent = formatRupiah(currentCash);
+  if (elCheckCashAfter) {
+    elCheckCashAfter.textContent = formatRupiah(Math.max(0, remainingCash));
+    elCheckCashAfter.style.color = remainingCash >= 0 ? 'var(--primary-600)' : 'var(--accent-rose)';
+  }
+}
+
 function renderCategoryBreakdown(totalCost) {
   const container = document.getElementById('dashCategoryBarsList');
   if (!container) return;
@@ -429,22 +528,13 @@ function renderShoppingList() {
   const status = App.filter.status;
 
   const filtered = App.items.filter(item => {
-    // Search
-    if (search && !item.name.toLowerCase().includes(search)) {
-      return false;
-    }
-    // Category
-    if (cat !== 'all' && item.category !== cat) {
-      return false;
-    }
-    // Status
+    if (search && !item.name.toLowerCase().includes(search)) return false;
+    if (cat !== 'all' && item.category !== cat) return false;
     if (status === 'pending' && item.is_purchased) return false;
     if (status === 'purchased' && !item.is_purchased) return false;
-
     return true;
   });
 
-  // Calculate totals
   const totalCost = App.items.reduce((acc, it) => acc + (Number(it.quantity) || 1) * (Number(it.price) || 0), 0);
   const purchasedCount = App.items.filter(it => it.is_purchased).length;
 
@@ -555,12 +645,8 @@ function renderBudgetSettings() {
   if (inputBudget && document.activeElement !== inputBudget) {
     inputBudget.value = App.budget.budget_limit || 500000;
   }
-  if (sliderCaution) {
-    sliderCaution.value = App.budget.alert_caution_percent || 75;
-  }
-  if (sliderDanger) {
-    sliderDanger.value = App.budget.alert_danger_percent || 90;
-  }
+  if (sliderCaution) sliderCaution.value = App.budget.alert_caution_percent || 75;
+  if (sliderDanger) sliderDanger.value = App.budget.alert_danger_percent || 90;
 
   updateBudgetSliderLabels();
 }
@@ -610,7 +696,7 @@ function renderHistory() {
           <i data-lucide="receipt" style="width: 32px; height: 32px;"></i>
         </div>
         <h3>Belum Ada Riwayat Belanja</h3>
-        <p>Setelah selesai berbelanja di kasir supermarket, klik tombol "Selesai Belanja / Kasir" untuk mencatat sesi ke riwayat.</p>
+        <p>Setelah selesai berbelanja di kasir supermarket, klik tombol "Selesai Belanja / Kasir" untuk mencatat sesi ke riwayat dan otomatis memotong uang kas.</p>
       </div>
     `;
     return;
@@ -635,6 +721,11 @@ function renderHistory() {
           <div class="trip-amount-badge">
             <div class="trip-amount-number">${formatRupiah(trip.total_spent)}</div>
             <div class="trip-items-count">${trip.items_count || items.length} Barang Dibeli</div>
+            ${trip.cash_before !== undefined && trip.cash_after !== undefined ? `
+              <div style="font-size: 0.72rem; color: #059669; font-weight: 700; margin-top: 3px;">
+                💵 Kas: ${formatRupiah(trip.cash_before)} ➔ ${formatRupiah(trip.cash_after)}
+              </div>
+            ` : ''}
           </div>
         </div>
 
@@ -662,8 +753,6 @@ async function toggleItemPurchased(itemId) {
   if (!item) return;
 
   const nextStatus = !item.is_purchased;
-  
-  // Optimistic UI update
   item.is_purchased = nextStatus;
   renderAllViews();
 
@@ -674,7 +763,6 @@ async function toggleItemPurchased(itemId) {
     });
     showToast(`Barang ditandai ${nextStatus ? 'sudah dibeli' : 'belum dibeli'}.`, 'success');
   } catch (err) {
-    // Revert on error
     item.is_purchased = !nextStatus;
     renderAllViews();
     showToast(err.message, 'error');
@@ -690,7 +778,6 @@ async function updateItemQuantity(itemId, delta) {
 
   if (nextQty === currentQty) return;
 
-  // Optimistic UI update
   item.quantity = nextQty;
   renderAllViews();
 
@@ -776,7 +863,6 @@ async function handleSaveItemForm(e) {
 
   try {
     if (id) {
-      // Edit
       const res = await api(`/api/grocery/items/${id}`, {
         method: 'PUT',
         body: JSON.stringify(payload)
@@ -785,7 +871,6 @@ async function handleSaveItemForm(e) {
       if (idx !== -1) App.items[idx] = res.item;
       showToast('Barang berhasil diperbarui!', 'success');
     } else {
-      // Create
       const res = await api('/api/grocery/items', {
         method: 'POST',
         body: JSON.stringify(payload)
@@ -842,6 +927,77 @@ async function handleConfirmDelete() {
 }
 
 // ============================================================================
+// WALLET MANAGEMENT (UANG BELANJA YANG DIPEGANG)
+// ============================================================================
+function openWalletModal() {
+  const currentCash = Number(App.wallet?.current_cash) || 500000;
+  const totalCartCost = App.items.reduce((acc, it) => acc + (Number(it.quantity) || 1) * (Number(it.price) || 0), 0);
+
+  const displayEl = document.getElementById('modalWalletCurrentCashDisplay');
+  const spentEl = document.getElementById('modalWalletSpentDisplay');
+  const inputEl = document.getElementById('inputWalletAmount');
+
+  if (displayEl) displayEl.textContent = formatRupiah(currentCash);
+  if (spentEl) spentEl.textContent = `Terpakai Belanja: ${formatRupiah(totalCartCost)}`;
+  if (inputEl) inputEl.value = currentCash;
+
+  setWalletModalMode('set');
+  document.getElementById('walletModalBackdrop')?.classList.add('active');
+  setTimeout(() => inputEl?.focus(), 150);
+}
+
+function closeWalletModal() {
+  document.getElementById('walletModalBackdrop')?.classList.remove('active');
+}
+
+function setWalletModalMode(mode) {
+  walletModalMode = mode;
+  const btnSet = document.getElementById('btnWalletTabSet');
+  const btnAdd = document.getElementById('btnWalletTabAdd');
+  const labelInput = document.getElementById('labelWalletInput');
+  const inputEl = document.getElementById('inputWalletAmount');
+
+  if (mode === 'set') {
+    btnSet?.classList.add('active');
+    btnAdd?.classList.remove('active');
+    if (labelInput) labelInput.textContent = 'Nominal Uang Belanja yang Dipegang Sekarang (Rp) *';
+    if (inputEl) inputEl.value = Number(App.wallet?.current_cash) || 500000;
+  } else {
+    btnSet?.classList.remove('active');
+    btnAdd?.classList.add('active');
+    if (labelInput) labelInput.textContent = 'Nominal Uang Kas yang Ditambahkan / Top Up (Rp) *';
+    if (inputEl) inputEl.value = 100000;
+  }
+}
+
+async function handleSaveWalletModal() {
+  const amount = parseFloat(document.getElementById('inputWalletAmount')?.value) || 0;
+  if (amount <= 0 && walletModalMode === 'add') {
+    showToast('Masukkan nominal uang yang valid!', 'warning');
+    return;
+  }
+
+  const payload = walletModalMode === 'set' ? { set_cash: amount } : { add_cash: amount };
+
+  try {
+    const res = await api('/api/grocery/wallet', {
+      method: 'PUT',
+      body: JSON.stringify(payload)
+    });
+
+    if (res.wallet) {
+      App.wallet = res.wallet;
+    }
+
+    closeWalletModal();
+    renderAllViews();
+    showToast(`Uang belanja yang dipegang berhasil diatur ke ${formatRupiah(App.wallet.current_cash)}!`, 'success');
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+
+// ============================================================================
 // BUDGET MANAGEMENT
 // ============================================================================
 async function handleSaveBudgetSettings() {
@@ -868,7 +1024,7 @@ async function handleSaveBudgetSettings() {
 }
 
 // ============================================================================
-// CHECKOUT & SHOPPING HISTORY
+// CHECKOUT & SHOPPING HISTORY (WITH AUTOMATIC CASH DEDUCTION)
 // ============================================================================
 function openCheckoutModal() {
   if (App.items.length === 0) {
@@ -877,13 +1033,18 @@ function openCheckoutModal() {
   }
 
   const totalCost = App.items.reduce((acc, it) => acc + (Number(it.quantity) || 1) * (Number(it.price) || 0), 0);
-  const budgetCap = Number(App.budget.budget_limit) || 500000;
-  const remaining = budgetCap - totalCost;
+  const currentCash = Number(App.wallet.current_cash) || 0;
+  const remainingCash = currentCash - totalCost;
 
   document.getElementById('checkoutTotalCount').textContent = `${App.items.length} Item`;
-  document.getElementById('checkoutBudgetCap').textContent = formatRupiah(budgetCap);
-  document.getElementById('checkoutTotalSpent').textContent = formatRupiah(totalCost);
-  document.getElementById('checkoutRemaining').textContent = formatRupiah(remaining);
+  document.getElementById('checkoutCashBefore').textContent = formatRupiah(currentCash);
+  document.getElementById('checkoutTotalSpent').textContent = `- ${formatRupiah(totalCost)}`;
+  
+  const cashAfterEl = document.getElementById('checkoutCashAfter');
+  if (cashAfterEl) {
+    cashAfterEl.textContent = formatRupiah(Math.max(0, remainingCash));
+    cashAfterEl.style.color = remainingCash >= 0 ? 'var(--primary-600)' : 'var(--accent-rose)';
+  }
 
   document.getElementById('checkoutModalBackdrop').classList.add('active');
 }
@@ -920,6 +1081,11 @@ async function handleConfirmCheckout() {
     if (!App.history) App.history = [];
     App.history.unshift(res.trip);
 
+    // Otomatis update uang kas di state!
+    if (res.wallet) {
+      App.wallet = res.wallet;
+    }
+
     if (clearCart) {
       App.items = [];
     } else {
@@ -928,9 +1094,9 @@ async function handleConfirmCheckout() {
 
     closeCheckoutModal();
     renderAllViews();
-    showToast(`🎉 Pembayaran di ${storeName} berhasil disimpan ke Riwayat!`, 'success');
+    showToast(`🎉 Pembayaran di ${storeName} berhasil! Uang kas otomatis terpotong menjadi ${formatRupiah(App.wallet.current_cash)}.`, 'success');
 
-    // Switch to history tab to show saved trip
+    // Beralih ke tab riwayat
     switchTab('tabHistory');
   } catch (err) {
     showToast(err.message, 'error');
@@ -979,7 +1145,7 @@ function showAuthError(msg) {
 }
 
 async function handleLoginSubmit(e) {
-  e.preventDefault();
+  if (e && e.preventDefault) e.preventDefault();
   const email = document.getElementById('loginEmailInput').value.trim();
   const password = document.getElementById('loginPasswordInput').value;
 
@@ -1001,7 +1167,7 @@ async function handleLoginSubmit(e) {
     closeAuthModal();
     initRealtimeSync();
     await fetchAllData();
-    showToast(`Selamat datang kembali, ${res.user.name}!`, 'success');
+    showToast(`Selamat datang, ${res.user.name}!`, 'success');
   } catch (err) {
     showAuthError(err.message);
   }
@@ -1068,11 +1234,19 @@ async function handleLogout() {
       }
       App.items = [];
       App.history = [];
+      App.wallet = { initial_cash: 500000, current_cash: 500000 };
       renderAllViews();
       showToast('Anda telah berhasil logout.', 'success');
       openAuthModal('login');
     }
   }
+}
+
+// Quick Login for Multi-Device
+function loginAsDeviceAccount(email, password) {
+  document.getElementById('loginEmailInput').value = email;
+  document.getElementById('loginPasswordInput').value = password;
+  handleLoginSubmit(new Event('submit'));
 }
 
 // ============================================================================
@@ -1081,29 +1255,22 @@ async function handleLogout() {
 function switchTab(tabId) {
   App.activeTab = tabId;
 
-  // Toggle tab contents
   document.querySelectorAll('.tab-content-panel').forEach(panel => {
     panel.classList.toggle('active', panel.id === tabId);
   });
 
-  // Toggle desktop navbar buttons
   document.querySelectorAll('.nav-tab-link').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.tab === tabId);
   });
 
-  // Toggle mobile navbar buttons
   document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.tab === tabId);
   });
 
-  // Refresh lucide icons
   if (window.lucide) window.lucide.createIcons();
-
-  // Scroll to top smoothly
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Escape HTML helper
 function escapeHtml(str) {
   if (!str) return '';
   return String(str)
@@ -1125,13 +1292,32 @@ async function initApp() {
     el.addEventListener('click', () => switchTab(el.dataset.tab));
   });
 
-  // Brand click -> go to Dashboard
   document.getElementById('brandHomeLink')?.addEventListener('click', () => switchTab('tabDashboard'));
 
   // Quick Action Buttons in Dashboard
   document.getElementById('btnDashQuickAdd')?.addEventListener('click', openAddItemModal);
   document.getElementById('btnDashGoShopping')?.addEventListener('click', () => switchTab('tabShoppingList'));
   document.getElementById('btnDashEditBudget')?.addEventListener('click', () => switchTab('tabBudget'));
+
+  // Wallet Modal Triggers
+  document.getElementById('btnOpenWalletModal')?.addEventListener('click', openWalletModal);
+  document.getElementById('btnShopQuickWallet')?.addEventListener('click', openWalletModal);
+  document.getElementById('btnCloseWalletModal')?.addEventListener('click', closeWalletModal);
+  document.getElementById('btnCancelWalletModal')?.addEventListener('click', closeWalletModal);
+  document.getElementById('btnSaveWalletModal')?.addEventListener('click', handleSaveWalletModal);
+
+  document.getElementById('btnWalletTabSet')?.addEventListener('click', () => setWalletModalMode('set'));
+  document.getElementById('btnWalletTabAdd')?.addEventListener('click', () => setWalletModalMode('add'));
+
+  document.querySelectorAll('[data-walletpreset]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const preset = btn.dataset.walletpreset;
+      const input = document.getElementById('inputWalletAmount');
+      if (input && preset) {
+        input.value = preset;
+      }
+    });
+  });
 
   // Shopping List Search & Filter Listeners
   const searchInput = document.getElementById('searchItemInput');
@@ -1141,7 +1327,6 @@ async function initApp() {
     if (window.lucide) window.lucide.createIcons();
   });
 
-  // Category Filter Chips
   document.querySelectorAll('.filter-chip-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.filter-chip-btn').forEach(b => b.classList.remove('active'));
@@ -1152,7 +1337,6 @@ async function initApp() {
     });
   });
 
-  // Status Filter Pills
   document.querySelectorAll('.status-pill-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.status-pill-btn').forEach(b => b.classList.remove('active'));
@@ -1171,7 +1355,6 @@ async function initApp() {
   document.getElementById('btnCancelItemModal')?.addEventListener('click', closeItemModal);
   document.getElementById('formGroceryItem')?.addEventListener('submit', handleSaveItemForm);
 
-  // Real-time Subtotal calculation inside modal
   const inputQty = document.getElementById('inputItemQty');
   const inputPrice = document.getElementById('inputItemPrice');
   const selectUnit = document.getElementById('selectItemUnit');
@@ -1190,7 +1373,6 @@ async function initApp() {
     updateModalSubtotalPreview();
   });
 
-  // Preset Add Quantity Chips
   document.querySelectorAll('[data-addqty]').forEach(btn => {
     btn.addEventListener('click', () => {
       const add = parseFloat(btn.dataset.addqty) || 1;
@@ -1238,11 +1420,12 @@ async function initApp() {
   document.getElementById('formAuthLogin')?.addEventListener('submit', handleLoginSubmit);
   document.getElementById('formAuthRegister')?.addEventListener('submit', handleRegisterSubmit);
 
-  // Quick Demo Login Button
-  document.getElementById('btnQuickDemoLogin')?.addEventListener('click', () => {
-    document.getElementById('loginEmailInput').value = 'demo@grocery.com';
-    document.getElementById('loginPasswordInput').value = 'Password123!';
-    handleLoginSubmit(new Event('submit'));
+  // Multi-Device Quick Buttons
+  document.getElementById('btnQuickDemoDevice1')?.addEventListener('click', () => {
+    loginAsDeviceAccount('demo@grocery.com', 'Password123!');
+  });
+  document.getElementById('btnQuickDemoDevice2')?.addEventListener('click', () => {
+    loginAsDeviceAccount('siti@grocery.com', 'Password123!');
   });
 
   // Show/Hide Password Toggle
@@ -1300,7 +1483,6 @@ async function initApp() {
       handleSessionExpired();
     }
   } else {
-    // If not logged in, prompt Auth Modal
     renderAllViews();
     openAuthModal('login');
   }
@@ -1308,12 +1490,12 @@ async function initApp() {
   if (window.lucide) window.lucide.createIcons();
 }
 
-// Expose functions globally for inline HTML event handlers
+// Expose functions globally for HTML event handlers
 window.toggleItemPurchased = toggleItemPurchased;
 window.updateItemQuantity = updateItemQuantity;
 window.openEditItemModal = openEditItemModal;
 window.promptDeleteItem = promptDeleteItem;
 window.switchTab = switchTab;
+window.openWalletModal = openWalletModal;
 
-// Start on DOM ready
 document.addEventListener('DOMContentLoaded', initApp);

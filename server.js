@@ -4,7 +4,8 @@
  * Features:
  * - Built-in secure PBKDF2 password hashing & token authentication
  * - Realtime Server-Sent Events (SSE) for instant cross-device synchronization
- * - RESTful API for Items CRUD, Budget Tracker, & Shopping History
+ * - RESTful API for Items CRUD, Budget Tracker, Shopping History & Cash-in-Hand Wallet
+ * - Feature: "Uang Belanja yang Kita Pegang" (Cash on Hand) & Otomatis Potong Saldo setelah Kasir
  * - Strict multi-tenant data isolation by user_id
  * - Persistent atomic storage in ./data/database.json
  * - LAN accessible (0.0.0.0) for testing on Laptop, Desktop, Tablet, & Phone
@@ -27,7 +28,7 @@ if (!fs.existsSync(DATA_DIR)) {
 }
 
 // ============================================================================
-// DATABASE & SEED INITIALIZATION
+// DATABASE & CRYPTO UTILITIES
 // ============================================================================
 function hashPassword(password, salt = null) {
   if (!salt) {
@@ -47,6 +48,7 @@ let db = {
   sessions: [],
   grocery_items: [],
   budget_settings: [],
+  wallets: [], // Uang belanja dipegang
   shopping_history: []
 };
 
@@ -55,6 +57,8 @@ function loadDatabase() {
     if (fs.existsSync(DB_FILE)) {
       const raw = fs.readFileSync(DB_FILE, 'utf8');
       db = JSON.parse(raw);
+      if (!db.wallets) db.wallets = [];
+      seedMissingAccounts();
     } else {
       seedInitialDatabase();
       saveDatabase();
@@ -77,49 +81,84 @@ function saveDatabase() {
 }
 
 function seedInitialDatabase() {
-  console.log('[DB] Seeding initial database with demo account...');
+  console.log('[DB] Seeding initial database with two device accounts...');
   
-  const demoSaltHash = hashPassword('Password123!');
-  const demoUserId = 'usr_demo_101';
+  const saltHash1 = hashPassword('Password123!');
+  const user1Id = 'usr_demo_101'; // Device 1 (Budi)
+
+  const saltHash2 = hashPassword('Password123!');
+  const user2Id = 'usr_demo_102'; // Device 2 (Siti)
   
   db.users = [
     {
-      id: demoUserId,
-      name: 'Budi Pratama',
+      id: user1Id,
+      name: 'Budi Pratama (Device 1 - Laptop)',
       email: 'demo@grocery.com',
-      salt: demoSaltHash.salt,
-      password_hash: demoSaltHash.hash,
+      salt: saltHash1.salt,
+      password_hash: saltHash1.hash,
+      created_at: new Date().toISOString()
+    },
+    {
+      id: user2Id,
+      name: 'Siti Rahmawati (Device 2 - HP/Tablet)',
+      email: 'siti@grocery.com',
+      salt: saltHash2.salt,
+      password_hash: saltHash2.hash,
       created_at: new Date().toISOString()
     }
   ];
 
   db.budget_settings = [
     {
-      user_id: demoUserId,
+      user_id: user1Id,
       budget_limit: 500000,
+      alert_caution_percent: 75,
+      alert_danger_percent: 90,
+      updated_at: new Date().toISOString()
+    },
+    {
+      user_id: user2Id,
+      budget_limit: 300000,
       alert_caution_percent: 75,
       alert_danger_percent: 90,
       updated_at: new Date().toISOString()
     }
   ];
 
+  // Wallets: Uang belanja yang kita pegang
+  db.wallets = [
+    {
+      user_id: user1Id,
+      initial_cash: 500000, // Uang awal dipegang
+      current_cash: 500000, // Sisa uang kas sekarang
+      updated_at: new Date().toISOString()
+    },
+    {
+      user_id: user2Id,
+      initial_cash: 300000,
+      current_cash: 300000,
+      updated_at: new Date().toISOString()
+    }
+  ];
+
+  // Items for User 1 (Budi)
   db.grocery_items = [
     {
-      id: 'item_seed_1',
-      user_id: demoUserId,
+      id: 'item_budi_1',
+      user_id: user1Id,
       name: 'Beras Premium Ramos 5 kg',
-      category: 'Fruits & Vegetables', // Or staple
+      category: 'Fruits & Vegetables',
       quantity: 1,
       unit: 'pack',
       price: 74000,
       is_purchased: true,
-      notes: 'Beli kemasan utuh, kualitas pulen',
+      notes: 'Beli kemasan utuh, pulen',
       created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
       updated_at: new Date().toISOString()
     },
     {
-      id: 'item_seed_2',
-      user_id: demoUserId,
+      id: 'item_budi_2',
+      user_id: user1Id,
       name: 'Apel Fuji Segar (1 kg)',
       category: 'Fruits & Vegetables',
       quantity: 1,
@@ -131,8 +170,8 @@ function seedInitialDatabase() {
       updated_at: new Date().toISOString()
     },
     {
-      id: 'item_seed_3',
-      user_id: demoUserId,
+      id: 'item_budi_3',
+      user_id: user1Id,
       name: 'Dada Ayam Fillet Segar',
       category: 'Meat & Seafood',
       quantity: 2,
@@ -144,21 +183,21 @@ function seedInitialDatabase() {
       updated_at: new Date().toISOString()
     },
     {
-      id: 'item_seed_4',
-      user_id: demoUserId,
+      id: 'item_budi_4',
+      user_id: user1Id,
       name: 'Susu UHT Full Cream 1 Liter',
       category: 'Dairy & Eggs',
       quantity: 2,
       unit: 'liter',
       price: 19500,
       is_purchased: false,
-      notes: 'Cek tanggal kadaluarsa minimal 6 bulan',
+      notes: 'Cek tanggal kadaluarsa',
       created_at: new Date(Date.now() - 3600000 * 5).toISOString(),
       updated_at: new Date().toISOString()
     },
     {
-      id: 'item_seed_5',
-      user_id: demoUserId,
+      id: 'item_budi_5',
+      user_id: user1Id,
       name: 'Kopi Bubuk Arabica 200g',
       category: 'Snacks & Beverages',
       quantity: 1,
@@ -170,16 +209,70 @@ function seedInitialDatabase() {
       updated_at: new Date().toISOString()
     },
     {
-      id: 'item_seed_6',
-      user_id: demoUserId,
+      id: 'item_budi_6',
+      user_id: user1Id,
       name: 'Deterjen Cair Konsentrat 800ml',
       category: 'Household',
       quantity: 1,
       unit: 'pouch',
       price: 24500,
       is_purchased: true,
-      notes: 'Pouch refill anti bakteri',
+      notes: 'Refill anti bakteri',
       created_at: new Date(Date.now() - 3600000 * 7).toISOString(),
+      updated_at: new Date().toISOString()
+    },
+
+    // Items for User 2 (Siti - Different Account & Items)
+    {
+      id: 'item_siti_1',
+      user_id: user2Id,
+      name: 'Telur Ayam Negeri 1 kg',
+      category: 'Dairy & Eggs',
+      quantity: 1,
+      unit: 'kg',
+      price: 29000,
+      is_purchased: false,
+      notes: 'Pilih cangkang bersih',
+      created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      id: 'item_siti_2',
+      user_id: user2Id,
+      name: 'Daging Sapi Rendang 500g',
+      category: 'Meat & Seafood',
+      quantity: 1,
+      unit: 'pack',
+      price: 68000,
+      is_purchased: false,
+      notes: 'Potongan dadu segar',
+      created_at: new Date(Date.now() - 3600000 * 3).toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      id: 'item_siti_3',
+      user_id: user2Id,
+      name: 'Jeruk Medan Manis 1 kg',
+      category: 'Fruits & Vegetables',
+      quantity: 1,
+      unit: 'kg',
+      price: 26000,
+      is_purchased: true,
+      notes: 'Kulit oranye berkilau',
+      created_at: new Date(Date.now() - 3600000 * 4).toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      id: 'item_siti_4',
+      user_id: user2Id,
+      name: 'Teh Celup Kotak Isi 25',
+      category: 'Snacks & Beverages',
+      quantity: 2,
+      unit: 'dus',
+      price: 12000,
+      is_purchased: true,
+      notes: 'Aroma melati',
+      created_at: new Date(Date.now() - 3600000 * 5).toISOString(),
       updated_at: new Date().toISOString()
     }
   ];
@@ -187,9 +280,11 @@ function seedInitialDatabase() {
   db.shopping_history = [
     {
       id: 'trip_seed_1',
-      user_id: demoUserId,
+      user_id: user1Id,
       store_name: 'Super Indo Sudirman',
       total_spent: 285000,
+      cash_before: 500000,
+      cash_after: 215000,
       items_count: 5,
       items_snapshot: [
         { name: 'Minyak Goreng 2L', price: 34000, qty: 1, unit: 'pouch' },
@@ -203,6 +298,52 @@ function seedInitialDatabase() {
   ];
 
   db.sessions = [];
+}
+
+function seedMissingAccounts() {
+  if (!db.wallets) db.wallets = [];
+  
+  // Ensure wallets exist for all users
+  for (const user of db.users) {
+    if (!db.wallets.some(w => w.user_id === user.id)) {
+      db.wallets.push({
+        user_id: user.id,
+        initial_cash: 500000,
+        current_cash: 500000,
+        updated_at: new Date().toISOString()
+      });
+    }
+  }
+
+  // Ensure Siti (Device 2) exists
+  const siti = db.users.find(u => u.email === 'siti@grocery.com');
+  if (!siti) {
+    const saltHash2 = hashPassword('Password123!');
+    const user2Id = 'usr_demo_102';
+    db.users.push({
+      id: user2Id,
+      name: 'Siti Rahmawati (Device 2 - HP/Tablet)',
+      email: 'siti@grocery.com',
+      salt: saltHash2.salt,
+      password_hash: saltHash2.hash,
+      created_at: new Date().toISOString()
+    });
+    db.budget_settings.push({
+      user_id: user2Id,
+      budget_limit: 300000,
+      alert_caution_percent: 75,
+      alert_danger_percent: 90,
+      updated_at: new Date().toISOString()
+    });
+    db.wallets.push({
+      user_id: user2Id,
+      initial_cash: 300000,
+      current_cash: 300000,
+      updated_at: new Date().toISOString()
+    });
+  }
+
+  saveDatabase();
 }
 
 loadDatabase();
@@ -328,7 +469,7 @@ const server = http.createServer(async (req, res) => {
   // --------------------------------------------------------------------------
   if (pathname === '/api/auth/register' && req.method === 'POST') {
     try {
-      const { name, email, password } = await parseBody(req);
+      const { name, email, password, initial_cash } = await parseBody(req);
       
       if (!name || name.trim().length < 2) {
         return jsonResponse(res, 400, { error: 'Nama minimal 2 karakter.' });
@@ -363,6 +504,16 @@ const server = http.createServer(async (req, res) => {
         budget_limit: 500000,
         alert_caution_percent: 75,
         alert_danger_percent: 90,
+        updated_at: new Date().toISOString()
+      });
+
+      // Create initial wallet (Uang belanja dipegang)
+      const cash = parseFloat(initial_cash) > 0 ? parseFloat(initial_cash) : 500000;
+      if (!db.wallets) db.wallets = [];
+      db.wallets.push({
+        user_id: userId,
+        initial_cash: cash,
+        current_cash: cash,
         updated_at: new Date().toISOString()
       });
 
@@ -450,11 +601,9 @@ const server = http.createServer(async (req, res) => {
       const normalizedEmail = email.trim().toLowerCase();
       const user = db.users.find(u => u.email === normalizedEmail);
       if (!user) {
-        // Safe response to prevent email enumeration
         return jsonResponse(res, 200, { message: 'Jika email terdaftar, tautan pemulihan kata sandi telah dikirim.' });
       }
 
-      // In local dev/test mode, provide temporary recovery code
       const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
       return jsonResponse(res, 200, {
         message: 'Instruksi pemulihan berhasil diproses.',
@@ -488,6 +637,70 @@ const server = http.createServer(async (req, res) => {
 
     registerSseClient(session.user_id, res);
     return;
+  }
+
+  // --------------------------------------------------------------------------
+  // WALLET / UANG BELANJA DI TANGAN (Cash on Hand)
+  // --------------------------------------------------------------------------
+  if (pathname === '/api/grocery/wallet' && req.method === 'GET') {
+    const user = authenticate(req);
+    if (!user) return jsonResponse(res, 401, { error: 'Unauthorized' });
+
+    if (!db.wallets) db.wallets = [];
+    let wallet = db.wallets.find(w => w.user_id === user.id);
+    if (!wallet) {
+      wallet = {
+        user_id: user.id,
+        initial_cash: 500000,
+        current_cash: 500000,
+        updated_at: new Date().toISOString()
+      };
+      db.wallets.push(wallet);
+      saveDatabase();
+    }
+
+    return jsonResponse(res, 200, { wallet });
+  }
+
+  if (pathname === '/api/grocery/wallet' && req.method === 'PUT') {
+    const user = authenticate(req);
+    if (!user) return jsonResponse(res, 401, { error: 'Unauthorized' });
+
+    try {
+      const data = await parseBody(req);
+      if (!db.wallets) db.wallets = [];
+      let wallet = db.wallets.find(w => w.user_id === user.id);
+      if (!wallet) {
+        wallet = { user_id: user.id, initial_cash: 500000, current_cash: 500000 };
+        db.wallets.push(wallet);
+      }
+
+      // Option 1: Set specific amount of cash on hand
+      if (data.set_cash !== undefined) {
+        const val = Math.max(0, parseFloat(data.set_cash) || 0);
+        wallet.initial_cash = val;
+        wallet.current_cash = val;
+      } 
+      // Option 2: Add cash (Top up)
+      else if (data.add_cash !== undefined) {
+        const add = parseFloat(data.add_cash) || 0;
+        wallet.initial_cash = (wallet.initial_cash || 0) + add;
+        wallet.current_cash = Math.max(0, (wallet.current_cash || 0) + add);
+      } 
+      // Option 3: Manual override
+      else {
+        if (data.initial_cash !== undefined) wallet.initial_cash = Math.max(0, parseFloat(data.initial_cash) || 0);
+        if (data.current_cash !== undefined) wallet.current_cash = Math.max(0, parseFloat(data.current_cash) || 0);
+      }
+
+      wallet.updated_at = new Date().toISOString();
+      saveDatabase();
+      broadcastSync(user.id, 'WALLET_UPDATED', wallet);
+
+      return jsonResponse(res, 200, { message: 'Uang belanja berhasil diperbarui!', wallet });
+    } catch (err) {
+      return jsonResponse(res, 500, { error: err.message });
+    }
   }
 
   // --------------------------------------------------------------------------
@@ -653,7 +866,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   // --------------------------------------------------------------------------
-  // SHOPPING HISTORY (Protected by User ID)
+  // SHOPPING HISTORY & AUTOMATIC CASH DEDUCTION
   // --------------------------------------------------------------------------
   if (pathname === '/api/grocery/history' && req.method === 'GET') {
     const user = authenticate(req);
@@ -676,11 +889,34 @@ const server = http.createServer(async (req, res) => {
       const totalSpent = parseFloat(data.total_spent) || 0;
       const storeName = data.store_name ? data.store_name.trim() : 'Supermarket';
 
+      // ======================================================================
+      // FITUR WAJIB: OTOMATIS KURANGI UANG BELANJA YANG KITA PEGANG
+      // ======================================================================
+      if (!db.wallets) db.wallets = [];
+      let wallet = db.wallets.find(w => w.user_id === user.id);
+      if (!wallet) {
+        wallet = {
+          user_id: user.id,
+          initial_cash: 500000,
+          current_cash: 500000,
+          updated_at: new Date().toISOString()
+        };
+        db.wallets.push(wallet);
+      }
+
+      const cashBefore = wallet.current_cash;
+      // Kurangi uang kas secara otomatis!
+      wallet.current_cash = Math.max(0, wallet.current_cash - totalSpent);
+      wallet.updated_at = new Date().toISOString();
+      const cashAfter = wallet.current_cash;
+
       const trip = {
         id: 'trip_' + crypto.randomBytes(8).toString('hex'),
         user_id: user.id,
         store_name: storeName,
         total_spent: totalSpent,
+        cash_before: cashBefore,
+        cash_after: cashAfter,
         items_count: itemsSnapshot.length,
         items_snapshot: itemsSnapshot,
         completed_at: new Date().toISOString()
@@ -699,9 +935,14 @@ const server = http.createServer(async (req, res) => {
       }
 
       saveDatabase();
+      broadcastSync(user.id, 'WALLET_UPDATED', wallet);
       broadcastSync(user.id, 'HISTORY_ADDED', trip);
 
-      return jsonResponse(res, 201, { message: 'Riwayat belanja berhasil disimpan!', trip });
+      return jsonResponse(res, 201, {
+        message: 'Riwayat belanja berhasil disimpan dan uang kas otomatis terpotong!',
+        trip,
+        wallet
+      });
     } catch (err) {
       return jsonResponse(res, 500, { error: err.message });
     }

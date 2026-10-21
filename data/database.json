@@ -79,6 +79,14 @@
       "salt": "60b853670840add3050e5ca3b8f3a1a2",
       "password_hash": "6be2a4516eec2d465d39a18d425b3f4d08696b84a8ec3831f0522871122ae68b5c912c74dfc24ce810698b308d08f35278ebdc0291f5c172f04c307180e5e5f2",
       "created_at": "2026-10-21T04:02:21.148Z"
+    },
+    {
+      "id": "usr_demo_102",
+      "name": "Siti Rahmawati (Device 2 - HP/Tablet)",
+      "email": "siti@grocery.com",
+      "salt": "e99122c8a3ef934231494083e9cae32a",
+      "password_hash": "624c9bfdfc0660e6a947f62320b91ecb16e730dd8cab6706cf784a363d57f682e8ed86773258b78ae173c2a855044e192c3fa18f97a8220c025070ff920bac63",
+      "created_at": "2026-10-21T04:11:16.558Z"
     }
   ],
   "sessions": [
@@ -343,6 +351,13 @@
       "alert_caution_percent": 75,
       "alert_danger_percent": 90,
       "updated_at": "2026-10-21T04:02:21.148Z"
+    },
+    {
+      "user_id": "usr_demo_102",
+      "budget_limit": 300000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:11:16.558Z"
     }
   ],
   "shopping_history": [
@@ -417,6 +432,74 @@
         }
       ],
       "completed_at": "2026-10-21T04:02:20.368Z"
+    }
+  ],
+  "wallets": [
+    {
+      "user_id": "usr_demo_101",
+      "initial_cash": 500000,
+      "current_cash": 500000,
+      "updated_at": "2026-10-21T04:11:16.486Z"
+    },
+    {
+      "user_id": "usr_1847ec9431699dc7",
+      "initial_cash": 500000,
+      "current_cash": 500000,
+      "updated_at": "2026-10-21T04:11:16.487Z"
+    },
+    {
+      "user_id": "usr_db5a7388c21c56fc",
+      "initial_cash": 500000,
+      "current_cash": 500000,
+      "updated_at": "2026-10-21T04:11:16.487Z"
+    },
+    {
+      "user_id": "usr_a6b2a467f2155610",
+      "initial_cash": 500000,
+      "current_cash": 500000,
+      "updated_at": "2026-10-21T04:11:16.487Z"
+    },
+    {
+      "user_id": "usr_e3f0e1e3272c077b",
+      "initial_cash": 500000,
+      "current_cash": 500000,
+      "updated_at": "2026-10-21T04:11:16.487Z"
+    },
+    {
+      "user_id": "usr_afbcc09420667a1b",
+      "initial_cash": 500000,
+      "current_cash": 500000,
+      "updated_at": "2026-10-21T04:11:16.487Z"
+    },
+    {
+      "user_id": "usr_d352dd3aedf96e81",
+      "initial_cash": 500000,
+      "current_cash": 500000,
+      "updated_at": "2026-10-21T04:11:16.487Z"
+    },
+    {
+      "user_id": "usr_3d5d3e15fd7c26c3",
+      "initial_cash": 500000,
+      "current_cash": 500000,
+      "updated_at": "2026-10-21T04:11:16.487Z"
+    },
+    {
+      "user_id": "usr_f48332b679a9324c",
+      "initial_cash": 500000,
+      "current_cash": 500000,
+      "updated_at": "2026-10-21T04:11:16.488Z"
+    },
+    {
+      "user_id": "usr_48b73ac3954d8c97",
+      "initial_cash": 500000,
+      "current_cash": 500000,
+      "updated_at": "2026-10-21T04:11:16.488Z"
+    },
+    {
+      "user_id": "usr_demo_102",
+      "initial_cash": 300000,
+      "current_cash": 300000,
+      "updated_at": "2026-10-21T04:11:16.558Z"
     }
   ]
 }

@@ -91,12 +91,31 @@ CREATE POLICY "Users can manage own budget"
   ON public.budget_settings FOR ALL
   USING (auth.uid() = user_id);
 
--- 5. Create Shopping History Table
+-- 5. Create Wallets Table (Uang Belanja yang Dipegang / Cash on Hand)
+CREATE TABLE IF NOT EXISTS public.wallets (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE UNIQUE NOT NULL,
+  initial_cash NUMERIC(12, 2) NOT NULL DEFAULT 500000.0,
+  current_cash NUMERIC(12, 2) NOT NULL DEFAULT 500000.0,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS on Wallets
+ALTER TABLE public.wallets ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage own wallet"
+  ON public.wallets FOR ALL
+  USING (auth.uid() = user_id);
+
+-- 6. Create Shopping History Table
 CREATE TABLE IF NOT EXISTS public.shopping_history (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
   store_name VARCHAR(255) NOT NULL DEFAULT 'Supermarket',
   total_spent NUMERIC(12, 2) NOT NULL DEFAULT 0.0,
+  cash_before NUMERIC(12, 2) NOT NULL DEFAULT 0.0,
+  cash_after NUMERIC(12, 2) NOT NULL DEFAULT 0.0,
   items_count INTEGER NOT NULL DEFAULT 0,
   items_snapshot JSONB NOT NULL DEFAULT '[]'::jsonb,
   completed_at TIMESTAMPTZ DEFAULT NOW()
