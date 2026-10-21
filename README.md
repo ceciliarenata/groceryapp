@@ -1,76 +1,176 @@
-# Smart Grocery & Budget Safety Tracker (PWA Mobile)
+# Smart Grocery Tracker 🛒✨
 
-Aplikasi Web Mobile (Progressive Web App - PWA) modern bergaya *native smartphone application* untuk siswa rantau / mahasiswa kos yang berbelanja bulanan sambil mendorong troli supermarket.
-
----
-
-## 📱 Arsitektur & Tampilan Mobile Sesuai Standar
-
-1. **Format Layar Smartphone (Mobile UI)**:
-   - Lebar maksimal `430px` (centered di layar monitor desktop dengan simulasi dynamic island dan bezel elegan).
-   - Tampilan responsif 100% saat dibuka di layar smartphone nyata (iPhone / Android) dengan dukungan *safe-area insets*.
-2. **Navigasi Bawah (Floating Bottom Navigation Bar)**:
-   - Menu navigasi melayang (*glassmorphic blur*) dengan ikon Lucide untuk 3 tab utama:
-     - 🛒 **Belanja**: Keranjang aktif, status troli, kendali Safety Cap, dan komparator harga.
-     - 📜 **Riwayat**: Catatan resmi belanja bulan-bulan sebelumnya dan database harga patokan.
-     - 🛡️ **Anggaran**: Konfigurasi batas dompet (Safety Cap), slider batas waspada/bahaya, dan analisis alokasi belanja per kategori.
-3. **Ergonomi Belanja Supermarket (Thumb-Friendly)**:
-   - Komponen tombol stepper kuantitas (`[-]` dan `[+]`) berukuran besar (ramah sentuhan satu tangan).
-   - Checkbox lingkaran besar *"Di Troli"* untuk menandai barang yang sudah masuk ke fisik troli belanja.
-   - Tidak ada layout tabel desktop yang melebar ke samping; menggunakan layout kartu (*card layout*) dengan hierarki visual kontras tinggi.
-4. **Dukungan PWA (Progressive Web App)**:
-   - Mobile viewport: `viewport-fit=cover, width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no`.
-   - Web App Manifest (`manifest.json`): Mode tampilan `standalone`, ikon aplikasi 192x192 & 512x512, warna tema gelap `#090d16`.
-   - Service Worker (`sw.js`): Caching offline (*stale-while-revalidate*) untuk dapat dibuka tanpa koneksi internet di lorong supermarket yang minim sinyal.
+Aplikasi web modern **Smart Grocery Tracker** untuk mengelola daftar belanja kebutuhan sehari-hari, mencatat barang, memantau pengeluaran, mengendalikan batas anggaran (*budget safety cap*), dan menyinkronkan data antar-perangkat secara *real-time* (Laptop, Komputer Desktop, Tablet, dan Smartphone).
 
 ---
 
-## ✅ Pemenuhan Checklist Kebutuhan Fungsional (SRS)
+## 🌟 Fitur Utama & Kepatuhan Evaluasi
 
-| Fitur SRS | Implementasi |
-| :--- | :--- |
-| **Pencatatan Item Belanja Lengkap** | Menyimpan nama produk (dengan *autocomplete* rekomendasi), kategori barang (Bahan Pokok, Makanan, Cuci, Bumbu, Snack), satuan (`kg`, `liter`, `pcs`, `pack`, `pouch`, dll), kuantitas, dan harga satuan. |
-| **Perhitungan Kuantitas Otomatis** | Perubahan angka kuantitas (Qty) secara realtime langsung mengalikan harga satuan setelah diskon ke total baris item dan mengupdate total keranjang serta sisa anggaran. |
-| **Kalkulator Diskon Bertingkat** | Menghitung diskon tunggal (contoh: `25%`), potongan nominal (contoh: `Rp 5.000`), maupun **diskon bertingkat / bertumpuk** (contoh: `50% + 20%` dengan rumus matematis tepat: $P \times (1 - d_1) \times (1 - d_2)$, penghematan efektif 60%). Dilengkapi breakdown matematika interaktif. |
-| **Komparator Harga Realtime vs Bulan Lalu** | Deteksi instan saat nama produk atau harga satuan diinput dengan indikator visual:<br>• **Panah Merah Naik (↑)**: Jika harga naik dibanding bulan lalu (dilengkapi selisih nominal dan persentase).<br>• **Panah Hijau Turun (↓)**: Jika harga turun / promo dibanding bulan lalu.<br>• **Tanda Setara (=)**: Jika harga stabil/sama.<br>• **Bintang (✨)**: Jika item baru (disimpan sebagai acuan). |
-| **Pengendali Anggaran (Safety Cap)** | Input batas maksimal dompet dengan meteran visual tiga zona: **Aman (Hijau)**, **Waspada (Kuning)**, dan **Bahaya Berkedip (Merah Menyala)** jika total keranjang mendekati atau melebihi limit. |
-| **Riwayat & Database Belanja** | Tombol *Kasir / Selesai* menyimpan data belanja ke penyimpanan data lokal (`localStorage`), dan **secara otomatis memperbarui harga acuan resmi** untuk belanja bulan berikutnya. Mendukung ekspor/impor JSON dan salin daftar barang (*repeat trip*). |
+### 1. Autentikasi Pengguna & Keamanan Data (Auth)
+- **Registrasi Akun Baru**: Formulir pendaftaran dengan validasi nama, format email, dan panjang kata sandi (minimal 6 karakter).
+- **Login Email & Password**: Sistem login aman dengan token sesi persisten.
+- **Enkripsi Kata Sandi Standar Industri**: Password di-*hash* menggunakan algoritma kriptografis **PBKDF2** (100.000 iterasi, SHA-512, dan garam unik 32-byte). Password tidak pernah disimpan dalam format teks biasa (*plaintext*).
+- **Proteksi Halaman (Guarded Routes)**: Endpoint API dan antarmuka belanja terlindungi dari akses tanpa autentikasi (HTTP 401 Unauthorized).
+- **Fitur Lupa Password**: Dialog pemulihan kata sandi dengan kode verifikasi reset.
+- **Akun Demo Bawaan**: Tersedia tombol 1-klik *"Coba Langsung dengan Akun Demo (Budi)"* untuk pengujian instan.
+- **Logout Aman**: Menghapus token sesi dari peramban dan membatalkan otorisasi backend.
 
 ---
 
-## 🚀 Cara Menjalankan Aplikasi Secara Lokal
+### 2. Sinkronisasi Antar-Perangkat Real-Time (Cross-Device Sync)
+- **Satu Akun untuk Semua Perangkat**: Akun yang sama dapat diakses secara bersamaan dari Laptop, Desktop, Tablet, dan Smartphone.
+- **Server-Sent Events (SSE)**: Setiap penambahan, pengeditan, atau penghapusan barang disiarkan secara instan ke seluruh tab dan perangkat yang sedang terbuka.
+- **Isolasi Data (Multi-Tenant)**: Setiap data belanjaan memiliki `user_id` pemilik. Pengguna A tidak dapat melihat, mengubah, atau menghapus barang milik Pengguna B.
+- **Akses Jaringan Lokal (LAN)**: Server backend secara otomatis mendengarkan pada `0.0.0.0:3000` dan menampilkan alamat IP lokal (contoh: `http://192.168.0.210:3000`), memungkinkan pengujian langsung menggunakan peramban HP di jaringan Wi-Fi yang sama.
+- **Dukungan Supabase PostgreSQL**: Dilengkapi dengan skema database lengkap (`supabase-schema.sql`) dengan **Row Level Security (RLS)** untuk opsi penggunaan backend cloud Supabase.
 
-Aplikasi menggunakan server HTTP Node.js bawaan tanpa dependensi pihak ketiga:
+---
 
+### 3. Dashboard Interaktif & Analisis Belanja
+- **4 Kartu Ringkasan Metrik**:
+  1. **Total Barang**: Jumlah seluruh kebutuhan dalam daftar belanja.
+  2. **Sudah Dibeli**: Jumlah dan persentase barang yang telah masuk keranjang.
+  3. **Belum Dibeli**: Jumlah barang yang masih harus dicari.
+  4. **Estimasi Total Biaya**: Akumulasi subtotal harga seluruh barang.
+- **Indikator Kesehatan Anggaran**: Meteran visual (*progress gauge*) dengan 3 zona:
+  - 🟢 **Zona Aman**: Pengeluaran masih di bawah ambang waspada.
+  - 🟡 **Zona Waspada**: Pengeluaran mendekati batas anggaran (default: $\ge 75\%$).
+  - 🔴 **Zona Bahaya / Melebihi Anggaran**: Pengeluaran kritis atau melebihi limit dengan banner peringatan berkedip.
+- **Alokasi Belanja per Kategori**: Visualisasi persentase dan nominal pengeluaran untuk 6 kategori utama.
+
+---
+
+### 4. Daftar Belanja Modern (Shopping List)
+- **6 Kategori Standar**:
+  - 🍎 **Fruits & Vegetables** (Buah & Sayuran)
+  - 🥩 **Meat & Seafood** (Daging & Makanan Laut)
+  - 🥛 **Dairy & Eggs** (Susu, Olahan Susu & Telur)
+  - ☕ **Snacks & Beverages** (Minuman & Camilan)
+  - 🧼 **Household** (Kebutuhan & Kebersihan Rumah Tangga)
+  - 📦 **Other** (Lainnya)
+- **Pencarian Real-Time**: Kolom pencarian instan berdasarkan nama produk.
+- **Filter Kategori & Status**: Filter cepat berdasarkan kategori atau status pembelian (*Semua*, *⏳ Belum Dibeli*, *✅ Sudah Dibeli*).
+- **Perhitungan Otomatis**: Subtotal ($qty \times price$) dihitung secara dinamis pada setiap baris barang dan modal input.
+- **Tombol Stepper Kuantitas**: Tombol `[-]` dan `[+]` ukuran besar untuk menambah/mengurangi jumlah barang secara cepat saat mendorong troli supermarket.
+- **Tandai Sudah Dibeli**: Kotak centang dengan animasi coret (*strike-through*) dan pembaruan instan ke database.
+- **Dialog Konfirmasi Hapus**: Dialog konfirmasi sebelum penghapusan barang untuk mencegah kehilangan data yang tidak disengaja.
+
+---
+
+### 5. Pengendali Anggaran (Budget Tracker)
+- Atur batas dompet belanja (*budget limit*) sesuai kemampuan finansial.
+- Tombol *preset* cepat: **Rp 200rb**, **Rp 300rb**, **Rp 500rb**, **Rp 750rb**, **Rp 1.000.000**.
+- Slider penyesuaian persentase **Ambang Waspada (Kuning)** dan **Ambang Bahaya (Merah)** lengkap dengan pratinjau nominal Rupiah.
+- Kartu tips belanja cerdas & hemat untuk kebutuhan harian.
+
+---
+
+### 6. Riwayat Belanja & Struk Kasir (Shopping History)
+- Tombol **"Kasir / Selesai Belanja"** untuk menyelesaikan sesi belanja.
+- Menyimpan snapshot rincian barang, nama supermarket/toko, tanggal belanja, dan total biaya ke riwayat.
+- Opsi untuk mengosongkan keranjang aktif setelah pembayaran selesai.
+- Rangkuman total belanja historis dan rata-rata pengeluaran per sesi.
+
+---
+
+## 💻 Panduan Menjalankan Aplikasi Secara Lokal
+
+Aplikasi menggunakan Node.js bawaan tanpa memerlukan instalasi dependensi luar (`zero external dependencies`):
+
+### 1. Menjalankan Server
+Buka terminal / PowerShell di direktori proyek:
 ```bash
-# 1. Jalankan server lokal
 node server.js
-
-# 2. Buka di browser
-# http://localhost:3000
 ```
 
-Untuk memasang ke smartphone (PWA):
-1. Buka `http://localhost:3000` (atau IP lokal komputer Anda, misal `http://192.168.1.X:3000`) di browser Chrome (Android) atau Safari (iOS).
-2. Pilih menu browser **"Tambahkan ke Layar Utama" (Add to Home Screen)**.
-3. Aplikasi akan terpasang di smartphone Anda sebagai aplikasi *native* mandiri tanpa address bar browser.
+### 2. Mengakses Aplikasi
+Buka peramban (Chrome / Edge / Firefox / Safari):
+- **Di Komputer / Laptop**: [http://localhost:3000](http://localhost:3000)
+- **Di Smartphone / Tablet (Wi-Fi yang sama)**: Buka alamat IP LAN yang tercetak di terminal (contoh: `http://192.168.0.210:3000`).
 
 ---
 
-## ☁️ Integrasi Firebase Cloud Firestore
+## 🔑 Kredensial Akun Pengujian Bawaan
 
-Aplikasi telah terhubung ke Firebase project `groceryapp-b84e9` menggunakan arsitektur **Hybrid Offline-First Sync**:
-- **Koleksi Firestore**: `grocery_users/{userId}`
-- **Data Tersinkron**: Keranjang aktif (`cart`), Pengaturan dompet (`settings`), Database harga patokan (`historyDb`), dan Riwayat belanja (`tripHistory`).
-- **Indikator Status**: Header aplikasi memiliki badge cloud status otomatis (`Tersambung (Online)`, `Menyinkronkan...`, atau `Mode Offline (Lokal)`).
-- **Aturan Firestore (Security Rules)**: Pastikan di Firebase Console -> Firestore Database -> Rules disetel mengizinkan baca & tulis untuk pengujian:
-  ```javascript
-  rules_version = '2';
-  service cloud.firestore {
-    match /databases/{database}/documents {
-      match /grocery_users/{userId} {
-        allow read, write: if true;
-      }
-    }
-  }
-  ```
+| Parameter | Akun Demo Bawaan | Akun Pengguna Baru |
+| :--- | :--- | :--- |
+| **Email** | `demo@grocery.com` | Dapat didaftarkan melalui tab *Daftar Akun Baru* |
+| **Password** | `Password123!` | Minimal 6 karakter |
+| **Nama** | Budi Pratama | Sesuai input registrasi |
+| **Pintasan** | Klik tombol *"Coba Langsung dengan Akun Demo (Budi)"* pada modal login | — |
+
+---
+
+## 🧪 Menjalankan Pengujian Otomatis
+
+Proyek ini dilengkapi dengan 2 berkas pengujian otomatis:
+
+### 1. Pengujian Unit, Integrasi & Keamanan (`test-app.js`)
+Menguji penyajian aset statis, PWA, enkripsi password PBKDF2, proteksi route (401), validasi duplikasi email (409), CRUD barang, isolasi multi-tenant, pembaruan anggaran, dan riwayat checkout:
+```bash
+node test-app.js
+```
+
+### 2. Pengujian Sinkronisasi Multi-Perangkat (`test-e2e-simulation.js`)
+Mensimulasikan skenario wajib sinkronisasi laptop dan smartphone:
+1. User A login di Laptop.
+2. User A menambah barang *"Beras 5 kg"* di Laptop.
+3. User A login di Smartphone.
+4. Smartphone memverifikasi bahwa *"Beras 5 kg"* muncul dengan data persis sama.
+5. User A mengedit barang dan menandai sudah dibeli via Smartphone.
+6. Laptop memverifikasi perubahan muncul dan tersinkron.
+7. Logout dan login kembali, data tetap persisten.
+8. User B login, memverifikasi isolasi data (0 item terlihat).
+
+Jalankan skenario:
+```bash
+node test-e2e-simulation.js
+```
+
+---
+
+## 🗄️ Skema Database Supabase & PostgreSQL (RLS)
+
+Jika ingin menghubungkan aplikasi ke layanan cloud Supabase, berkas [`supabase-schema.sql`](supabase-schema.sql) telah disediakan:
+
+1. Buka dashboard proyek Supabase Anda: **SQL Editor**.
+2. Salin seluruh isi berkas `supabase-schema.sql`.
+3. Jalankan script SQL. Skema ini mencakup:
+   - Tabel `public.profiles` dengan trigger pembuatan otomatis.
+   - Tabel `public.grocery_items` dengan 6 kategori valid dan foreign key ke `auth.users`.
+   - Tabel `public.budget_settings` untuk target limit dan ambang batas.
+   - Tabel `public.shopping_history` dengan snapshot JSONB.
+   - Kebijakan **Row Level Security (RLS)** aktif pada semua tabel (`auth.uid() = user_id`).
+4. Konfigurasikan file `.env` berdasarkan template [`.env.example`](.env.example).
+
+---
+
+## 📱 Panduan Pemasangan sebagai PWA (Mobile App)
+
+1. Buka alamat aplikasi di Chrome (Android) atau Safari (iOS).
+2. Tekan menu opsi peramban (titik tiga atau tombol Share).
+3. Pilih **"Tambahkan ke Layar Utama" (Add to Home Screen)**.
+4. Aplikasi akan terpasang di smartphone layaknya aplikasi *native* mandiri tanpa address bar peramban.
+
+---
+
+## 📂 Struktur Berkas Proyek
+
+```
+c:\Users\Student\groceryapp/
+├── index.html               # Halaman utama aplikasi (Dashboard, Belanja, Anggaran, Riwayat, Modal)
+├── css/
+│   └── style.css            # Desain modern responsif (Hijau Segar, Putih Bersih, Grid Desktop & Mobile)
+├── js/
+│   └── app.js               # Pengendali utama (State, API, SSE Real-time, Event Handlers, Modals)
+├── server.js                # Server backend Node.js (PBKDF2 Auth, REST API, SSE Broadcaster, Data Isolation)
+├── data/
+│   └── database.json        # Penyimpanan persisten backend (Users, Items, Budget, History)
+├── test-app.js              # Test suite komprehensif (Unit, Integrasi, Security, Static Assets)
+├── test-e2e-simulation.js   # Test skenario sinkronisasi multi-perangkat (Laptop & Smartphone)
+├── supabase-schema.sql      # Skema database PostgreSQL & Supabase lengkap dengan RLS
+├── .env.example             # Contoh konfigurasi environment variables
+├── manifest.json            # Web App Manifest untuk dukungan PWA
+├── sw.js                    # Service Worker untuk caching & dukungan offline
+└── README.md                # Dokumentasi lengkap proyek
+```

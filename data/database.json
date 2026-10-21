@@ -1,0 +1,422 @@
+{
+  "users": [
+    {
+      "id": "usr_demo_101",
+      "name": "Budi Pratama",
+      "email": "demo@grocery.com",
+      "salt": "1ffced207f99806c26f1789d279cf0c7",
+      "password_hash": "457e8e2f24805d07825ceb120b1e904495541f5ef8497cc7c0fdaaadb7e271a84f6276fde2a836789411ed8ebcb697e3816e0781538ca168f477c37aa501ddd6",
+      "created_at": "2026-10-21T03:55:26.959Z"
+    },
+    {
+      "id": "usr_1847ec9431699dc7",
+      "name": "User B Testing",
+      "email": "testuser_1792554939024@grocery.com",
+      "salt": "338559beed5fcf8ac05be426c631632e",
+      "password_hash": "2fc8b7eb4059df0f2543e7c69cbdfa959afab6cc06bcaf350dc9988c408477696694d3afcc03ec1630d64e42c0d89f62298d112e9691e8dd5a529bdb18ae4ecf",
+      "created_at": "2026-10-21T03:55:39.114Z"
+    },
+    {
+      "id": "usr_db5a7388c21c56fc",
+      "name": "Siti Rahmawati",
+      "email": "user_1792555237887@grocery.com",
+      "salt": "9548b6ea397ff12839b3f0257bbd0096",
+      "password_hash": "af3a530bf0dd0f316536b92f7d4b3c6c317dae31e8f9df1ec25a1a9bdbcbd26f86ce6ca6fbed6d238c3cab2a29cd532d0cbe8b6d6e2705a44ef08b657c84383a",
+      "created_at": "2026-10-21T04:00:37.962Z"
+    },
+    {
+      "id": "usr_a6b2a467f2155610",
+      "name": "User C Isolation",
+      "email": "userc_1792555237989@grocery.com",
+      "salt": "5092a7c1d686dc44f5999887aff586ba",
+      "password_hash": "9b9444e5c97269d1df9ee90a008df7bef2049e6453b13704c55ae9b3939ebe6c140045ef9ce605e0d16ed4f9bbdd3cbff4177d0f30bc3d326de394b19143c6da",
+      "created_at": "2026-10-21T04:00:38.084Z"
+    },
+    {
+      "id": "usr_e3f0e1e3272c077b",
+      "name": "Cecilia Renata",
+      "email": "cecil_1792555299813@mutiarabangsa.sch.id",
+      "salt": "f10f3bc02141ba449fae4c3a023e6608",
+      "password_hash": "b7f027a56316cb1527e83f2080f4a9f8760dca86ab8886446478c8f9f687ec215109a0789d86be391a8f257d8372e762e48819e1f127fc0eeec32356a9fc70c5",
+      "created_at": "2026-10-21T04:01:39.909Z"
+    },
+    {
+      "id": "usr_afbcc09420667a1b",
+      "name": "Akun Lain B",
+      "email": "other_1792555300086@grocery.com",
+      "salt": "3bdfa1a88a60abf0ed73f10bd3d7e7e8",
+      "password_hash": "caf6e7cb19cebcb591ec7cd9e3d6666e7e694d4444b94fa1ddd532dfa430fe740fd23ec3696232f1ac471cb34d54e69cff3e3cb539b85717d4889aa7b2342a8f",
+      "created_at": "2026-10-21T04:01:40.164Z"
+    },
+    {
+      "id": "usr_d352dd3aedf96e81",
+      "name": "Siti Rahmawati",
+      "email": "user_1792555340079@grocery.com",
+      "salt": "ee90caa10afb65d0d621bffd19a8b24f",
+      "password_hash": "5ac6da17e19c8587bc245da6f00438a880aa720081dbc8bcb9fcfda00c0d9d38512372b42450882905d665da8715afff5b487c8d84c2f8616cef304dc82efb65",
+      "created_at": "2026-10-21T04:02:20.190Z"
+    },
+    {
+      "id": "usr_3d5d3e15fd7c26c3",
+      "name": "User C Isolation",
+      "email": "userc_1792555340236@grocery.com",
+      "salt": "dd1b3a4bd73a307f46ff57aa4b25b72f",
+      "password_hash": "671517967fe215e2d1bd7194f9dfd118f31ca43d2613af2ac7dab6922c6ab506fbf8b4b013b1c249ebefd478c3a92ad7827aca2074501718c7be6714e4959412",
+      "created_at": "2026-10-21T04:02:20.350Z"
+    },
+    {
+      "id": "usr_f48332b679a9324c",
+      "name": "Cecilia Renata",
+      "email": "cecil_1792555340543@mutiarabangsa.sch.id",
+      "salt": "3ed8f2f11cf2a972f40b5e89783622eb",
+      "password_hash": "67e19368e49127debd9bb394fe6f0e5aef2e4d95f6585d83e87a910465c23dfd66c1c963924338bd32e8babbe32bdba2d2dc7e0eba6c37740fdb8a7c809301ef",
+      "created_at": "2026-10-21T04:02:20.727Z"
+    },
+    {
+      "id": "usr_48b73ac3954d8c97",
+      "name": "Akun Lain B",
+      "email": "other_1792555341033@grocery.com",
+      "salt": "60b853670840add3050e5ca3b8f3a1a2",
+      "password_hash": "6be2a4516eec2d465d39a18d425b3f4d08696b84a8ec3831f0522871122ae68b5c912c74dfc24ce810698b308d08f35278ebdc0291f5c172f04c307180e5e5f2",
+      "created_at": "2026-10-21T04:02:21.148Z"
+    }
+  ],
+  "sessions": [
+    {
+      "token": "tok_ffafdfef93116171f5cd097c897d375ffb7dcf014075f4e1",
+      "user_id": "usr_demo_101",
+      "created_at": "2026-10-21T03:55:38.926Z",
+      "expires_at": "2026-11-20T03:55:38.926Z"
+    },
+    {
+      "token": "tok_916f2629a77ae49a1e0bd311214a2aaed7f81b8d347aa974",
+      "user_id": "usr_1847ec9431699dc7",
+      "created_at": "2026-10-21T03:55:39.114Z",
+      "expires_at": "2026-11-20T03:55:39.114Z"
+    },
+    {
+      "token": "tok_f51dbb29e55dd64786528a264b9fe7da3fa50a421afd4397",
+      "user_id": "usr_demo_101",
+      "created_at": "2026-10-21T04:00:37.797Z",
+      "expires_at": "2026-11-20T04:00:37.797Z"
+    },
+    {
+      "token": "tok_138192bbd1330504da4b6c45d5c786e98d0405985af1319e",
+      "user_id": "usr_db5a7388c21c56fc",
+      "created_at": "2026-10-21T04:00:37.962Z",
+      "expires_at": "2026-11-20T04:00:37.962Z"
+    },
+    {
+      "token": "tok_ebdb9256e9a901abec44eeace0852b889206fd6aef166593",
+      "user_id": "usr_a6b2a467f2155610",
+      "created_at": "2026-10-21T04:00:38.084Z",
+      "expires_at": "2026-11-20T04:00:38.084Z"
+    },
+    {
+      "token": "tok_3d829ee22dafa87b2663e7a950e3af1fc12594f4c143095f",
+      "user_id": "usr_e3f0e1e3272c077b",
+      "created_at": "2026-10-21T04:01:39.909Z",
+      "expires_at": "2026-11-20T04:01:39.909Z"
+    },
+    {
+      "token": "tok_c5f2ce088ce2565f16649458da2ce509a99fbb847b454ed2",
+      "user_id": "usr_e3f0e1e3272c077b",
+      "created_at": "2026-10-21T04:01:40.081Z",
+      "expires_at": "2026-11-20T04:01:40.081Z"
+    },
+    {
+      "token": "tok_67315809511cbd89a90efd2bae07740b5f39b176ee5830d1",
+      "user_id": "usr_afbcc09420667a1b",
+      "created_at": "2026-10-21T04:01:40.164Z",
+      "expires_at": "2026-11-20T04:01:40.164Z"
+    },
+    {
+      "token": "tok_7b0671b4db36de24638d66bc853db68a8ab1cac69842b2e6",
+      "user_id": "usr_demo_101",
+      "created_at": "2026-10-21T04:02:19.960Z",
+      "expires_at": "2026-11-20T04:02:19.960Z"
+    },
+    {
+      "token": "tok_74ccb6cb572d59b7c04db4562afd7386670f764aa1e315c7",
+      "user_id": "usr_d352dd3aedf96e81",
+      "created_at": "2026-10-21T04:02:20.190Z",
+      "expires_at": "2026-11-20T04:02:20.190Z"
+    },
+    {
+      "token": "tok_9ddf0f33fb285ff69f313cbdac088f632cbf008167d8ea6b",
+      "user_id": "usr_3d5d3e15fd7c26c3",
+      "created_at": "2026-10-21T04:02:20.350Z",
+      "expires_at": "2026-11-20T04:02:20.350Z"
+    },
+    {
+      "token": "tok_a12b1305784cbd79bf83d1da93b6202d5f44df8371bf69a6",
+      "user_id": "usr_f48332b679a9324c",
+      "created_at": "2026-10-21T04:02:20.727Z",
+      "expires_at": "2026-11-20T04:02:20.727Z"
+    },
+    {
+      "token": "tok_cb0c60fb4c680a9c27c079ec2d464a9204d3ece90d7cabe4",
+      "user_id": "usr_f48332b679a9324c",
+      "created_at": "2026-10-21T04:02:21.023Z",
+      "expires_at": "2026-11-20T04:02:21.023Z"
+    },
+    {
+      "token": "tok_cd73af52ab4e6a26b0be88ac2955248ed7663358c7c631f7",
+      "user_id": "usr_48b73ac3954d8c97",
+      "created_at": "2026-10-21T04:02:21.148Z",
+      "expires_at": "2026-11-20T04:02:21.148Z"
+    }
+  ],
+  "grocery_items": [
+    {
+      "id": "item_seed_1",
+      "user_id": "usr_demo_101",
+      "name": "Beras Premium Ramos 5 kg",
+      "category": "Fruits & Vegetables",
+      "quantity": 1,
+      "unit": "pack",
+      "price": 74000,
+      "is_purchased": true,
+      "notes": "Beli kemasan utuh, kualitas pulen",
+      "created_at": "2026-10-21T01:55:26.960Z",
+      "updated_at": "2026-10-21T03:55:26.960Z"
+    },
+    {
+      "id": "item_seed_2",
+      "user_id": "usr_demo_101",
+      "name": "Apel Fuji Segar (1 kg)",
+      "category": "Fruits & Vegetables",
+      "quantity": 1,
+      "unit": "kg",
+      "price": 38000,
+      "is_purchased": false,
+      "notes": "Pilih yang manis dan garing",
+      "created_at": "2026-10-21T00:55:26.961Z",
+      "updated_at": "2026-10-21T03:55:26.961Z"
+    },
+    {
+      "id": "item_seed_3",
+      "user_id": "usr_demo_101",
+      "name": "Dada Ayam Fillet Segar",
+      "category": "Meat & Seafood",
+      "quantity": 2,
+      "unit": "pack",
+      "price": 36000,
+      "is_purchased": true,
+      "notes": "500g per pack",
+      "created_at": "2026-10-20T23:55:26.961Z",
+      "updated_at": "2026-10-21T03:55:26.961Z"
+    },
+    {
+      "id": "item_seed_4",
+      "user_id": "usr_demo_101",
+      "name": "Susu UHT Full Cream 1 Liter",
+      "category": "Dairy & Eggs",
+      "quantity": 2,
+      "unit": "liter",
+      "price": 19500,
+      "is_purchased": false,
+      "notes": "Cek tanggal kadaluarsa minimal 6 bulan",
+      "created_at": "2026-10-20T22:55:26.961Z",
+      "updated_at": "2026-10-21T03:55:26.961Z"
+    },
+    {
+      "id": "item_seed_5",
+      "user_id": "usr_demo_101",
+      "name": "Kopi Bubuk Arabica 200g",
+      "category": "Snacks & Beverages",
+      "quantity": 1,
+      "unit": "pack",
+      "price": 28000,
+      "is_purchased": false,
+      "notes": "Medium roast",
+      "created_at": "2026-10-20T21:55:26.961Z",
+      "updated_at": "2026-10-21T03:55:26.961Z"
+    },
+    {
+      "id": "item_seed_6",
+      "user_id": "usr_demo_101",
+      "name": "Deterjen Cair Konsentrat 800ml",
+      "category": "Household",
+      "quantity": 1,
+      "unit": "pouch",
+      "price": 24500,
+      "is_purchased": true,
+      "notes": "Pouch refill anti bakteri",
+      "created_at": "2026-10-20T20:55:26.961Z",
+      "updated_at": "2026-10-21T03:55:26.961Z"
+    },
+    {
+      "id": "item_34eb1bba3433e7e7",
+      "user_id": "usr_e3f0e1e3272c077b",
+      "name": "Beras 5 kg",
+      "category": "Fruits & Vegetables",
+      "quantity": 2,
+      "unit": "pack",
+      "price": 76000,
+      "is_purchased": true,
+      "notes": "Diambil dari rak depan",
+      "created_at": "2026-10-21T04:01:39.918Z",
+      "updated_at": "2026-10-21T04:01:40.001Z"
+    },
+    {
+      "id": "item_e417069075963199",
+      "user_id": "usr_f48332b679a9324c",
+      "name": "Beras 5 kg",
+      "category": "Fruits & Vegetables",
+      "quantity": 2,
+      "unit": "pack",
+      "price": 76000,
+      "is_purchased": true,
+      "notes": "Diambil dari rak depan",
+      "created_at": "2026-10-21T04:02:20.738Z",
+      "updated_at": "2026-10-21T04:02:20.887Z"
+    }
+  ],
+  "budget_settings": [
+    {
+      "user_id": "usr_demo_101",
+      "budget_limit": 600000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T03:55:39.123Z"
+    },
+    {
+      "user_id": "usr_1847ec9431699dc7",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T03:55:39.114Z"
+    },
+    {
+      "user_id": "usr_db5a7388c21c56fc",
+      "budget_limit": 750000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:00:38.093Z"
+    },
+    {
+      "user_id": "usr_a6b2a467f2155610",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:00:38.084Z"
+    },
+    {
+      "user_id": "usr_e3f0e1e3272c077b",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:01:39.909Z"
+    },
+    {
+      "user_id": "usr_afbcc09420667a1b",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:01:40.164Z"
+    },
+    {
+      "user_id": "usr_d352dd3aedf96e81",
+      "budget_limit": 750000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:02:20.364Z"
+    },
+    {
+      "user_id": "usr_3d5d3e15fd7c26c3",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:02:20.350Z"
+    },
+    {
+      "user_id": "usr_f48332b679a9324c",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:02:20.727Z"
+    },
+    {
+      "user_id": "usr_48b73ac3954d8c97",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:02:21.148Z"
+    }
+  ],
+  "shopping_history": [
+    {
+      "id": "trip_seed_1",
+      "user_id": "usr_demo_101",
+      "store_name": "Super Indo Sudirman",
+      "total_spent": 285000,
+      "items_count": 5,
+      "items_snapshot": [
+        {
+          "name": "Minyak Goreng 2L",
+          "price": 34000,
+          "qty": 1,
+          "unit": "pouch"
+        },
+        {
+          "name": "Telur Ayam 1 kg",
+          "price": 29000,
+          "qty": 1,
+          "unit": "kg"
+        },
+        {
+          "name": "Bawang Merah 500g",
+          "price": 22000,
+          "qty": 1,
+          "unit": "pack"
+        },
+        {
+          "name": "Sabun Cuci Piring Refill",
+          "price": 15500,
+          "qty": 1,
+          "unit": "pouch"
+        },
+        {
+          "name": "Beras Ramos 10 kg",
+          "price": 145000,
+          "qty": 1,
+          "unit": "pack"
+        }
+      ],
+      "completed_at": "2026-10-14T03:55:26.961Z"
+    },
+    {
+      "id": "trip_9c7fb701b4a04c4f",
+      "user_id": "usr_db5a7388c21c56fc",
+      "store_name": "Hypermart Karawaci",
+      "total_spent": 135000,
+      "items_count": 1,
+      "items_snapshot": [
+        {
+          "name": "Apel Royal Gala 1 kg",
+          "qty": 3,
+          "unit": "kg",
+          "price": 45000
+        }
+      ],
+      "completed_at": "2026-10-21T04:00:38.097Z"
+    },
+    {
+      "id": "trip_65d139b21fdf4670",
+      "user_id": "usr_d352dd3aedf96e81",
+      "store_name": "Hypermart Karawaci",
+      "total_spent": 135000,
+      "items_count": 1,
+      "items_snapshot": [
+        {
+          "name": "Apel Royal Gala 1 kg",
+          "qty": 3,
+          "unit": "kg",
+          "price": 45000
+        }
+      ],
+      "completed_at": "2026-10-21T04:02:20.368Z"
+    }
+  ]
+}
