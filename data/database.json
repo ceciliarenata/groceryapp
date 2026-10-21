@@ -287,6 +287,70 @@
       "salt": "0726777ba31cc7623cd12895430ffbb6",
       "password_hash": "edc874585078c6cbbf12084524f6063d0b14a68a9d543a3cf02c56ebfa3e223c6c8a6adb94b8fc9173c1ad6cfc552fd06e73fabc18c9f3a814bb6547cd51564a",
       "created_at": "2026-10-21T04:36:53.430Z"
+    },
+    {
+      "id": "dev_laptop_1792557685457",
+      "name": "Laptop Kerja Kantor",
+      "email": "dev_laptop_1792557685457@device.local",
+      "salt": "",
+      "password_hash": "",
+      "created_at": "2026-10-21T04:41:25.497Z"
+    },
+    {
+      "id": "dev_phone_1792557685457",
+      "name": "Perangkat 5457",
+      "email": "dev_phone_1792557685457@device.local",
+      "salt": "",
+      "password_hash": "",
+      "created_at": "2026-10-21T04:41:25.516Z"
+    },
+    {
+      "id": "usr_4899c061dda83143",
+      "name": "Siti Rahmawati",
+      "email": "user_1792557692038@grocery.com",
+      "salt": "f1ce086f07aa3b53fc2b2d59bad7f4ea",
+      "password_hash": "998a4422de5e50c9493b4282c8a75944cb6e65efe935fec838dcef6d4eacffe232b2d6d59cd4ec92c0b865c9cd583198b5639eed24196090a93a37617fc4f8c6",
+      "created_at": "2026-10-21T04:41:32.123Z"
+    },
+    {
+      "id": "usr_f4938c7bc9f19ea4",
+      "name": "User C Isolation",
+      "email": "userc_1792557692146@grocery.com",
+      "salt": "474d53c6fc8d30ccc328841931171b7d",
+      "password_hash": "4d52d93e155179bb9a9e7dd2101d808a233a62bbfeaf4611d2b035b62a94322dba05a45c87a7271b99592a8749477b235ae82f83380d37493c320aacdf408178",
+      "created_at": "2026-10-21T04:41:32.244Z"
+    },
+    {
+      "id": "usr_65cb1a65ed023cc1",
+      "name": "Pengguna Bebas",
+      "email": "user_1792557707746",
+      "salt": "7cff147b14c514cd455104b5fac165f8",
+      "password_hash": "729507238ccd5d929fbb738fa0f2513caca8be19c99ecf8c3d7d21ed0a91c5239e0967b524a7cc4c6c6e28ba6c65eec9db99187005f48af68835b9c411f9ea9a",
+      "created_at": "2026-10-21T04:41:47.847Z"
+    },
+    {
+      "id": "usr_9d8a93205cc0bf7d",
+      "name": "auto_1792557708002",
+      "email": "auto_1792557708002",
+      "salt": "8f6e8a5a11b92f65776d1bd64c316e55",
+      "password_hash": "2aa436894d1961490d97c9c7a46e0ed7f08e7561ac7b3dd475455241e273eb8eb449fdb97bb29f725525efbd3401a6ead5d40da71b61ee40f4c4a5cd62772fb8",
+      "created_at": "2026-10-21T04:41:48.075Z"
+    },
+    {
+      "id": "usr_76f187cd8f005c83",
+      "name": "Cecilia Renata",
+      "email": "cecil_1792557713300@mutiarabangsa.sch.id",
+      "salt": "555511d5dea9f0954431ff7601c8be73",
+      "password_hash": "4b0874673dc6b405259063d2c5e45ca23116ca17fc67b67c302ed5b3563b15f6b7abd968d1189a7761f83909bb8e23c71e3347d5a6116ca44d162ac5d530e1f2",
+      "created_at": "2026-10-21T04:41:53.400Z"
+    },
+    {
+      "id": "usr_fd3e2d71feb6d285",
+      "name": "Akun Lain B",
+      "email": "other_1792557713584@grocery.com",
+      "salt": "0c43e200042f32cb5187ae4e1630ad04",
+      "password_hash": "86af2e9bd38149d137ef01d8f57b9965ff68429f8010b0107acb8fbec8d05e4ef1569ef0792c6e94b6dceaaffd7ccfc235b749bc5ef0834f0fae6cb1d6e4ad6c",
+      "created_at": "2026-10-21T04:41:53.655Z"
     }
   ],
   "sessions": [
@@ -625,6 +689,72 @@
       "user_id": "usr_8039e70486f7f34b",
       "created_at": "2026-10-21T04:36:53.431Z",
       "expires_at": "2026-11-20T04:36:53.431Z"
+    },
+    {
+      "token": "tok_4e9545c61ca1c4bb185d81d826373e5af2e7320e16b0519d",
+      "user_id": "usr_demo_101",
+      "created_at": "2026-10-21T04:41:31.951Z",
+      "expires_at": "2026-11-20T04:41:31.951Z"
+    },
+    {
+      "token": "tok_f608512db7fc182786b675fa131b8d2273e608c22ed1482c",
+      "user_id": "usr_4899c061dda83143",
+      "created_at": "2026-10-21T04:41:32.123Z",
+      "expires_at": "2026-11-20T04:41:32.123Z"
+    },
+    {
+      "token": "tok_b19a640a145a4cf3b8e2b2283f2b1f101a7b47004e549592",
+      "user_id": "usr_f4938c7bc9f19ea4",
+      "created_at": "2026-10-21T04:41:32.244Z",
+      "expires_at": "2026-11-20T04:41:32.244Z"
+    },
+    {
+      "token": "tok_0071b4da0abebeeb2c19cb5e96206405b7a621c60155fdc9",
+      "user_id": "usr_demo_101",
+      "created_at": "2026-10-21T04:41:38.651Z",
+      "expires_at": "2026-11-20T04:41:38.651Z"
+    },
+    {
+      "token": "tok_f3371be79090a80738f0ae67698480f152521d8748199ddd",
+      "user_id": "usr_demo_102",
+      "created_at": "2026-10-21T04:41:38.740Z",
+      "expires_at": "2026-11-20T04:41:38.740Z"
+    },
+    {
+      "token": "tok_518da926887a4f31b312dd2086a1817a7aa71c92406ec803",
+      "user_id": "usr_65cb1a65ed023cc1",
+      "created_at": "2026-10-21T04:41:47.847Z",
+      "expires_at": "2026-11-20T04:41:47.847Z"
+    },
+    {
+      "token": "tok_304babf94a02e79a577a099f1b9e746c7199d6b5168b7739",
+      "user_id": "usr_65cb1a65ed023cc1",
+      "created_at": "2026-10-21T04:41:47.926Z",
+      "expires_at": "2026-11-20T04:41:47.926Z"
+    },
+    {
+      "token": "tok_30f1dd490892f1843e4860a375ae31ce005f214177cb2c05",
+      "user_id": "usr_9d8a93205cc0bf7d",
+      "created_at": "2026-10-21T04:41:48.077Z",
+      "expires_at": "2026-11-20T04:41:48.077Z"
+    },
+    {
+      "token": "tok_d586bd2c0d71c006f18fb69845afac710fd89be7d30530ca",
+      "user_id": "usr_76f187cd8f005c83",
+      "created_at": "2026-10-21T04:41:53.400Z",
+      "expires_at": "2026-11-20T04:41:53.400Z"
+    },
+    {
+      "token": "tok_ec6f66d91ddb1fb0cede1405968b3bb3beab7de3d4c16110",
+      "user_id": "usr_76f187cd8f005c83",
+      "created_at": "2026-10-21T04:41:53.580Z",
+      "expires_at": "2026-11-20T04:41:53.580Z"
+    },
+    {
+      "token": "tok_f20fb8f1318316872318cbfed358778c08ef859933c24e8d",
+      "user_id": "usr_fd3e2d71feb6d285",
+      "created_at": "2026-10-21T04:41:53.655Z",
+      "expires_at": "2026-11-20T04:41:53.655Z"
     }
   ],
   "grocery_items": [
@@ -861,6 +991,32 @@
       "notes": "Diambil dari rak depan",
       "created_at": "2026-10-21T04:36:53.194Z",
       "updated_at": "2026-10-21T04:36:53.280Z"
+    },
+    {
+      "id": "item_8f7b7b99a2f5de4c",
+      "user_id": "dev_phone_1792557685457",
+      "name": "Kopi Kenangan Botol",
+      "category": "Snacks & Beverages",
+      "quantity": 2,
+      "unit": "pcs",
+      "price": 15000,
+      "is_purchased": false,
+      "notes": "",
+      "created_at": "2026-10-21T04:41:25.525Z",
+      "updated_at": "2026-10-21T04:41:25.525Z"
+    },
+    {
+      "id": "item_5f99398ae2f119b5",
+      "user_id": "usr_76f187cd8f005c83",
+      "name": "Beras 5 kg",
+      "category": "Fruits & Vegetables",
+      "quantity": 2,
+      "unit": "pack",
+      "price": 76000,
+      "is_purchased": true,
+      "notes": "Diambil dari rak depan",
+      "created_at": "2026-10-21T04:41:53.409Z",
+      "updated_at": "2026-10-21T04:41:53.495Z"
     }
   ],
   "budget_settings": [
@@ -1115,6 +1271,62 @@
       "alert_caution_percent": 75,
       "alert_danger_percent": 90,
       "updated_at": "2026-10-21T04:36:53.431Z"
+    },
+    {
+      "user_id": "dev_laptop_1792557685457",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:41:25.497Z"
+    },
+    {
+      "user_id": "dev_phone_1792557685457",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:41:25.516Z"
+    },
+    {
+      "user_id": "usr_4899c061dda83143",
+      "budget_limit": 750000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:41:32.254Z"
+    },
+    {
+      "user_id": "usr_f4938c7bc9f19ea4",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:41:32.244Z"
+    },
+    {
+      "user_id": "usr_65cb1a65ed023cc1",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:41:47.847Z"
+    },
+    {
+      "user_id": "usr_9d8a93205cc0bf7d",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:41:48.075Z"
+    },
+    {
+      "user_id": "usr_76f187cd8f005c83",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:41:53.400Z"
+    },
+    {
+      "user_id": "usr_fd3e2d71feb6d285",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:41:53.655Z"
     }
   ],
   "shopping_history": [
@@ -1537,6 +1749,97 @@
         }
       ],
       "completed_at": "2026-10-21T04:36:48.373Z"
+    },
+    {
+      "id": "trip_62f66482c6f9dc30",
+      "user_id": "dev_laptop_1792557685457",
+      "store_name": "Supermarket Bintang",
+      "total_spent": 38000,
+      "cash_before": 700000,
+      "cash_after": 662000,
+      "items_count": 1,
+      "items_snapshot": [
+        {
+          "id": "item_827dbe6484356b40",
+          "user_id": "dev_laptop_1792557685457",
+          "name": "Minyak Goreng 2 Liter",
+          "category": "Household",
+          "quantity": 1,
+          "unit": "pouch",
+          "price": 38000,
+          "is_purchased": false,
+          "notes": "",
+          "created_at": "2026-10-21T04:41:25.513Z",
+          "updated_at": "2026-10-21T04:41:25.513Z"
+        }
+      ],
+      "completed_at": "2026-10-21T04:41:25.536Z"
+    },
+    {
+      "id": "trip_5c822f7da1b869a7",
+      "user_id": "usr_4899c061dda83143",
+      "store_name": "Hypermart Karawaci",
+      "total_spent": 135000,
+      "cash_before": 500000,
+      "cash_after": 365000,
+      "items_count": 1,
+      "items_snapshot": [
+        {
+          "name": "Apel Royal Gala 1 kg",
+          "qty": 3,
+          "unit": "kg",
+          "price": 45000
+        }
+      ],
+      "completed_at": "2026-10-21T04:41:32.264Z"
+    },
+    {
+      "id": "trip_f880632b353e0111",
+      "user_id": "usr_demo_101",
+      "store_name": "Grand Lucky SCBD",
+      "total_spent": 225000,
+      "cash_before": 750000,
+      "cash_after": 525000,
+      "items_count": 2,
+      "items_snapshot": [
+        {
+          "name": "Daging Wagyu",
+          "qty": 1,
+          "price": 175000,
+          "unit": "pack"
+        },
+        {
+          "name": "Keju Mozzarella",
+          "qty": 1,
+          "price": 50000,
+          "unit": "pack"
+        }
+      ],
+      "completed_at": "2026-10-21T04:41:38.791Z"
+    },
+    {
+      "id": "trip_4245f72863658f10",
+      "user_id": "usr_demo_101",
+      "store_name": "Indomaret Fresh",
+      "total_spent": 125000,
+      "cash_before": 525000,
+      "cash_after": 400000,
+      "items_count": 2,
+      "items_snapshot": [
+        {
+          "name": "Susu UHT 2L",
+          "qty": 2,
+          "price": 40000,
+          "unit": "liter"
+        },
+        {
+          "name": "Roti Gandum",
+          "qty": 1,
+          "price": 45000,
+          "unit": "pack"
+        }
+      ],
+      "completed_at": "2026-10-21T04:41:38.800Z"
     }
   ],
   "wallets": [
@@ -1544,7 +1847,7 @@
       "user_id": "usr_demo_101",
       "initial_cash": 750000,
       "current_cash": 400000,
-      "updated_at": "2026-10-21T04:36:43.201Z"
+      "updated_at": "2026-10-21T04:41:38.800Z"
     },
     {
       "user_id": "usr_1847ec9431699dc7",
@@ -1755,6 +2058,54 @@
       "initial_cash": 500000,
       "current_cash": 500000,
       "updated_at": "2026-10-21T04:36:53.431Z"
+    },
+    {
+      "user_id": "dev_laptop_1792557685457",
+      "initial_cash": 700000,
+      "current_cash": 662000,
+      "updated_at": "2026-10-21T04:41:25.536Z"
+    },
+    {
+      "user_id": "dev_phone_1792557685457",
+      "initial_cash": 250000,
+      "current_cash": 250000,
+      "updated_at": "2026-10-21T04:41:25.521Z"
+    },
+    {
+      "user_id": "usr_4899c061dda83143",
+      "initial_cash": 500000,
+      "current_cash": 365000,
+      "updated_at": "2026-10-21T04:41:32.264Z"
+    },
+    {
+      "user_id": "usr_f4938c7bc9f19ea4",
+      "initial_cash": 500000,
+      "current_cash": 500000,
+      "updated_at": "2026-10-21T04:41:32.244Z"
+    },
+    {
+      "user_id": "usr_65cb1a65ed023cc1",
+      "initial_cash": 500000,
+      "current_cash": 500000,
+      "updated_at": "2026-10-21T04:41:47.847Z"
+    },
+    {
+      "user_id": "usr_9d8a93205cc0bf7d",
+      "initial_cash": 500000,
+      "current_cash": 500000,
+      "updated_at": "2026-10-21T04:41:48.075Z"
+    },
+    {
+      "user_id": "usr_76f187cd8f005c83",
+      "initial_cash": 500000,
+      "current_cash": 500000,
+      "updated_at": "2026-10-21T04:41:53.400Z"
+    },
+    {
+      "user_id": "usr_fd3e2d71feb6d285",
+      "initial_cash": 500000,
+      "current_cash": 500000,
+      "updated_at": "2026-10-21T04:41:53.655Z"
     }
   ]
 }

@@ -579,112 +579,7 @@
     </div>
   </nav>
 
-  <!-- ========================================================================
-       MODAL 1: AUTHENTICATION (LOGIN & REGISTER)
-       ======================================================================== -->
-  <div class="modal-backdrop" id="authModalBackdrop">
-    <div class="modal-dialog-card" id="authModalCard">
-      
-      <div class="modal-dialog-body" style="padding: 2rem 1.75rem 1.5rem 1.75rem;">
-        
-        <!-- Auth Hero Brand -->
-        <div class="auth-hero-header">
-          <div class="auth-hero-logo">
-            <i data-lucide="shopping-cart" style="width: 28px; height: 28px;"></i>
-          </div>
-          <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--neutral-900);">Smart Grocery Tracker</h2>
-          <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
-            Masuk atau daftar untuk sinkronisasi daftar belanja Anda antar-perangkat.
-          </p>
-        </div>
 
-        <!-- Auth Tabs: Login vs Register -->
-        <div class="auth-tabs-toggle">
-          <button type="button" class="auth-tab-btn active" id="btnToggleAuthLogin">Masuk (Login)</button>
-          <button type="button" class="auth-tab-btn" id="btnToggleAuthRegister">Daftar Akun Baru</button>
-        </div>
-
-        <!-- Validation Error Message Banner -->
-        <div class="auth-error-banner" id="authErrorBanner">
-          <span id="authErrorMsg">Pesan error validasi</span>
-        </div>
-
-        <!-- Form: LOGIN -->
-        <form id="formAuthLogin" onsubmit="return false;">
-          <div class="form-group">
-            <label class="form-label" for="loginEmailInput">Username atau Email Bebas *</label>
-            <input type="text" class="form-input" id="loginEmailInput" placeholder="Username / nama akun bebas (cth: budi, siti, user1)" required autocomplete="username">
-          </div>
-          <div class="form-group">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
-              <label class="form-label" for="loginPasswordInput" style="margin-bottom: 0;">Password Bebas *</label>
-              <button type="button" id="btnForgotPassTrigger" style="font-size: 0.76rem; color: var(--primary-600); background: none; border: none; cursor: pointer; font-weight: 600;">Lupa Password?</button>
-            </div>
-            <div style="position: relative;">
-              <input type="password" class="form-input" id="loginPasswordInput" placeholder="Password bebas (cth: 123)" required autocomplete="current-password">
-              <button type="button" class="btn-toggle-eye" id="btnToggleLoginPass" style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--neutral-400); cursor: pointer;">
-                <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
-              </button>
-            </div>
-          </div>
-          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-            <input type="checkbox" id="chkAutoCreateAccount" style="accent-color: var(--primary-600); width: 16px; height: 16px; cursor: pointer;">
-            <label for="chkAutoCreateAccount" style="font-size: 0.78rem; color: var(--neutral-700); cursor: pointer; user-select: none;">
-              Otomatis buat akun jika belum ada (langsung login bebas)
-            </label>
-          </div>
-          <button type="submit" class="btn-primary" id="btnSubmitLogin" style="width: 100%; height: 44px; margin-top: 0.25rem;">
-            <i data-lucide="log-in"></i> Masuk ke Akun
-          </button>
-        </form>
-
-        <!-- Form: REGISTER -->
-        <form id="formAuthRegister" style="display: none;" onsubmit="return false;">
-          <div class="form-group">
-            <label class="form-label" for="regNameInput">Nama Lengkap (Bebas / Opsional)</label>
-            <input type="text" class="form-input" id="regNameInput" placeholder="Nama Anda (opsional)" autocomplete="name">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="regEmailInput">Username atau Email Bebas *</label>
-            <input type="text" class="form-input" id="regEmailInput" placeholder="Username / nama akun bebas (cth: budi, siti, user1)" required autocomplete="username">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="regPasswordInput">Password Bebas (Panjang Berapa Saja) *</label>
-            <input type="password" class="form-input" id="regPasswordInput" placeholder="Password bebas (contoh: 123)" required autocomplete="new-password">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="regPasswordConfirmInput">Konfirmasi Password (Opsional)</label>
-            <input type="password" class="form-input" id="regPasswordConfirmInput" placeholder="Ulangi password (opsional)" autocomplete="new-password">
-          </div>
-          <button type="submit" class="btn-primary" id="btnSubmitRegister" style="width: 100%; height: 44px; margin-top: 0.5rem;">
-            <i data-lucide="user-plus"></i> Buat Akun Baru
-          </button>
-        </form>
-
-        <!-- Multi-Device Demo Accounts Section -->
-        <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border-light); text-align: center;">
-          <p style="font-size: 0.74rem; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 700;">
-            📱 PENGUJIAN BEDA AKUN PER PERANGKAT:
-          </p>
-          <div style="display: flex; flex-direction: column; gap: 0.45rem;">
-            <button type="button" class="btn-secondary" id="btnQuickDemoDevice1" style="width: 100%; font-size: 0.8rem; background: var(--primary-50); color: var(--primary-800); border-color: var(--primary-200); text-align: left; justify-content: flex-start; padding: 0.5rem 0.75rem;">
-              <i data-lucide="laptop" style="width: 16px; height: 16px; color: var(--primary-600); flex-shrink: 0;"></i>
-              <span><b>Akun Device 1:</b> Budi (Kas: Rp 500rb, 6 Barang)</span>
-            </button>
-            <button type="button" class="btn-secondary" id="btnQuickDemoDevice2" style="width: 100%; font-size: 0.8rem; background: #e0f2fe; color: #0369a1; border-color: #bae6fd; text-align: left; justify-content: flex-start; padding: 0.5rem 0.75rem;">
-              <i data-lucide="smartphone" style="width: 16px; height: 16px; color: #0284c7; flex-shrink: 0;"></i>
-              <span><b>Akun Device 2:</b> Siti (Kas: Rp 300rb, 4 Barang)</span>
-            </button>
-          </div>
-          <span style="display: block; font-size: 0.72rem; color: var(--text-muted); margin-top: 0.5rem;">
-            ✅ Setiap device dapat memakai akun berbeda. Data belanjaan & uang kas 100% terpisah.
-          </span>
-        </div>
-
-      </div>
-
-    </div>
-  </div>
 
   <!-- ========================================================================
        MODAL 2: ADD / EDIT GROCERY ITEM
@@ -951,37 +846,7 @@
     </div>
   </div>
 
-  <!-- ========================================================================
-       MODAL 5: FORGOT PASSWORD
-       ======================================================================== -->
-  <div class="modal-backdrop" id="forgotPassBackdrop">
-    <div class="modal-dialog-card" style="max-width: 420px;">
-      <div class="modal-dialog-header">
-        <h3>Pemulihan Kata Sandi</h3>
-        <button class="modal-close-btn" id="btnCloseForgotModal">
-          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
-        </button>
-      </div>
-      <div class="modal-dialog-body">
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
-          Masukkan alamat email yang terdaftar untuk menerima petunjuk pemulihan kata sandi.
-        </p>
-        <div class="form-group">
-          <label class="form-label" for="inputForgotEmail">Username atau Alamat Email *</label>
-          <input type="text" class="form-input" id="inputForgotEmail" placeholder="Username / email terdaftar" required>
-        </div>
-        <div id="forgotSuccessBox" style="display: none; background: var(--primary-50); border: 1px solid var(--primary-200); color: var(--primary-800); border-radius: var(--radius-md); padding: 0.75rem; font-size: 0.82rem; margin-top: 0.75rem;">
-          Instruksi pemulihan berhasil diproses!
-        </div>
-      </div>
-      <div class="modal-dialog-footer">
-        <button class="btn-secondary" id="btnCancelForgot">Tutup</button>
-        <button class="btn-primary" id="btnSubmitForgot">
-          <i data-lucide="send"></i> Kirim Instruksi
-        </button>
-      </div>
-    </div>
-  </div>
+
 
   <!-- ========================================================================
        MODAL 6: PENGATURAN PERANGKAT (BEBAS TANPA LOGIN)
