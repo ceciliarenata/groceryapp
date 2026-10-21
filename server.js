@@ -343,6 +343,68 @@ function seedMissingAccounts() {
     });
   }
 
+  // Ensure items exist for Siti
+  const sitiUser = db.users.find(u => u.email === 'siti@grocery.com');
+  if (sitiUser) {
+    const sitiItems = db.grocery_items.filter(i => i.user_id === sitiUser.id);
+    if (sitiItems.length === 0) {
+      db.grocery_items.push(
+        {
+          id: 'item_siti_1',
+          user_id: sitiUser.id,
+          name: 'Telur Ayam Negeri 1 kg',
+          category: 'Dairy & Eggs',
+          quantity: 1,
+          unit: 'kg',
+          price: 29000,
+          is_purchased: false,
+          notes: 'Pilih cangkang bersih',
+          created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
+          updated_at: new Date().toISOString()
+        },
+        {
+          id: 'item_siti_2',
+          user_id: sitiUser.id,
+          name: 'Daging Sapi Rendang 500g',
+          category: 'Meat & Seafood',
+          quantity: 1,
+          unit: 'pack',
+          price: 68000,
+          is_purchased: false,
+          notes: 'Potongan dadu segar',
+          created_at: new Date(Date.now() - 3600000 * 3).toISOString(),
+          updated_at: new Date().toISOString()
+        },
+        {
+          id: 'item_siti_3',
+          user_id: sitiUser.id,
+          name: 'Jeruk Medan Manis 1 kg',
+          category: 'Fruits & Vegetables',
+          quantity: 1,
+          unit: 'kg',
+          price: 26000,
+          is_purchased: true,
+          notes: 'Kulit oranye berkilau',
+          created_at: new Date(Date.now() - 3600000 * 4).toISOString(),
+          updated_at: new Date().toISOString()
+        },
+        {
+          id: 'item_siti_4',
+          user_id: sitiUser.id,
+          name: 'Teh Celup Kotak Isi 25',
+          category: 'Snacks & Beverages',
+          quantity: 2,
+          unit: 'dus',
+          price: 12000,
+          is_purchased: true,
+          notes: 'Aroma melati',
+          created_at: new Date(Date.now() - 3600000 * 5).toISOString(),
+          updated_at: new Date().toISOString()
+        }
+      );
+    }
+  }
+
   saveDatabase();
 }
 

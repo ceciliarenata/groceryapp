@@ -57,17 +57,26 @@ Aplikasi web modern **Smart Grocery Tracker** untuk mengelola daftar belanja keb
 
 ---
 
-### 5. Pengendali Anggaran (Budget Tracker)
-- Atur batas dompet belanja (*budget limit*) sesuai kemampuan finansial.
-- Tombol *preset* cepat: **Rp 200rb**, **Rp 300rb**, **Rp 500rb**, **Rp 750rb**, **Rp 1.000.000**.
-- Slider penyesuaian persentase **Ambang Waspada (Kuning)** dan **Ambang Bahaya (Merah)** lengkap dengan pratinjau nominal Rupiah.
-- Kartu tips belanja cerdas & hemat untuk kebutuhan harian.
+### 5. Pengendali Anggaran (Budget Tracker) & Uang Kas Dipegang (Cash Wallet)
+- **Fitur Uang Belanja yang Dipegang (Cash on Hand)**:
+  - Input jumlah uang fisik/kas yang Anda bawa ke supermarket/pasar (contoh: Rp 500.000).
+  - Tombol pintas penambahan cepat: **+Rp 50.000**, **+Rp 100.000**, **+Rp 200.000**, **+Rp 500.000**.
+  - **Bar Pelacak Uang Kas Real-Time** pada layar daftar belanja: Menampilkan uang dipegang, total belanjaan saat ini, dan sisa uang kas langsung saat barang ditambahkan.
+  - **Peringatan Defisit Kas Otomatis**: Jika total belanjaan melebihi uang kas yang dipegang, muncul peringatan merah *"Uang belanjaan Anda kurang Rp X. Segera kurangi barang atau tambah uang kas!"*.
+- **Pemotongan Uang Kas Otomatis Saat Selesai Belanja (Checkout)**:
+  - Saat menekan *"Selesai Belanja / Kasir"*, struk menampilkan rincian: Uang Dipegang Awal, Total Belanja, dan Sisa Uang Kas.
+  - Ketika pembayaran dikonfirmasi, sistem secara otomatis memotong uang kas Anda (`current_cash = current_cash - total_spent`) dan menyiarkan pembaruan secara *real-time*.
+- **Pengendali Anggaran Bulanan (Budget Safety Cap)**:
+  - Atur batas dompet belanja (*budget limit*) sesuai kemampuan finansial.
+  - Tombol *preset* cepat: **Rp 200rb**, **Rp 300rb**, **Rp 500rb**, **Rp 750rb**, **Rp 1.000.000**.
+  - Slider penyesuaian persentase **Ambang Waspada (Kuning)** dan **Ambang Bahaya (Merah)** lengkap dengan pratinjau nominal Rupiah.
+  - Kartu tips belanja cerdas & hemat untuk kebutuhan harian.
 
 ---
 
 ### 6. Riwayat Belanja & Struk Kasir (Shopping History)
 - Tombol **"Kasir / Selesai Belanja"** untuk menyelesaikan sesi belanja.
-- Menyimpan snapshot rincian barang, nama supermarket/toko, tanggal belanja, dan total biaya ke riwayat.
+- Menyimpan snapshot rincian barang, nama supermarket/toko, tanggal belanja, uang kas sebelum, total belanja, dan sisa uang kas setelah dipotong.
 - Opsi untuk mengosongkan keranjang aktif setelah pembayaran selesai.
 - Rangkuman total belanja historis dan rata-rata pengeluaran per sesi.
 
@@ -90,39 +99,39 @@ Buka peramban (Chrome / Edge / Firefox / Safari):
 
 ---
 
-## 🔑 Kredensial Akun Pengujian Bawaan
+## 🔑 Kredensial Akun Pengujian Multi-Perangkat (Multi-Device Accounts)
 
-| Parameter | Akun Demo Bawaan | Akun Pengguna Baru |
-| :--- | :--- | :--- |
-| **Email** | `demo@grocery.com` | Dapat didaftarkan melalui tab *Daftar Akun Baru* |
-| **Password** | `Password123!` | Minimal 6 karakter |
-| **Nama** | Budi Pratama | Sesuai input registrasi |
-| **Pintasan** | Klik tombol *"Coba Langsung dengan Akun Demo (Budi)"* pada modal login | — |
+Setiap perangkat dapat menggunakan akun yang berbeda secara mandiri dengan isolasi data 100%:
+
+| Perangkat / Akun | Nama Pengguna | Email | Password | Uang Kas Bawaan | Keterangan |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Device 1 (Laptop/PC)** | Budi Pratama | `demo@grocery.com` | `Password123!` | Rp 500.000 | Akun Belanja Utama (Tersedia tombol 1-klik di modal login) |
+| **Device 2 (HP/Tablet)** | Siti Rahmawati | `siti@grocery.com` | `Password123!` | Rp 300.000 | Akun Perangkat Kedua (Tersedia tombol 1-klik di modal login) |
+| **Akun Baru Mandiri** | Nama Pendaftar | Sesuai pendaftaran | Minimal 6 karakter | Rp 500.000 (Default) | Daftar di tab *Daftar Akun Baru* pada sembarang perangkat |
+
+> [!NOTE]
+> Kedua akun di atas terisolasi penuh. Uang kas, daftar belanjaan, anggaran, dan riwayat belanja Siti tidak akan bercampur dengan Budi.
 
 ---
 
 ## 🧪 Menjalankan Pengujian Otomatis
 
-Proyek ini dilengkapi dengan 2 berkas pengujian otomatis:
+Proyek ini dilengkapi dengan 3 berkas pengujian otomatis:
 
-### 1. Pengujian Unit, Integrasi & Keamanan (`test-app.js`)
+### 1. Pengujian Dompet Kas & Multi-Device (`test-wallet-and-devices.js`)
+Menguji login akun berbeda di device berbeda, penyesuaian uang belanja yang dipegang, dan pemotongan otomatis uang kas saat checkout:
+```bash
+node test-wallet-and-devices.js
+```
+
+### 2. Pengujian Unit, Integrasi & Keamanan (`test-app.js`)
 Menguji penyajian aset statis, PWA, enkripsi password PBKDF2, proteksi route (401), validasi duplikasi email (409), CRUD barang, isolasi multi-tenant, pembaruan anggaran, dan riwayat checkout:
 ```bash
 node test-app.js
 ```
 
-### 2. Pengujian Sinkronisasi Multi-Perangkat (`test-e2e-simulation.js`)
+### 3. Pengujian Sinkronisasi Multi-Perangkat (`test-e2e-simulation.js`)
 Mensimulasikan skenario wajib sinkronisasi laptop dan smartphone:
-1. User A login di Laptop.
-2. User A menambah barang *"Beras 5 kg"* di Laptop.
-3. User A login di Smartphone.
-4. Smartphone memverifikasi bahwa *"Beras 5 kg"* muncul dengan data persis sama.
-5. User A mengedit barang dan menandai sudah dibeli via Smartphone.
-6. Laptop memverifikasi perubahan muncul dan tersinkron.
-7. Logout dan login kembali, data tetap persisten.
-8. User B login, memverifikasi isolasi data (0 item terlihat).
-
-Jalankan skenario:
 ```bash
 node test-e2e-simulation.js
 ```
@@ -139,7 +148,8 @@ Jika ingin menghubungkan aplikasi ke layanan cloud Supabase, berkas [`supabase-s
    - Tabel `public.profiles` dengan trigger pembuatan otomatis.
    - Tabel `public.grocery_items` dengan 6 kategori valid dan foreign key ke `auth.users`.
    - Tabel `public.budget_settings` untuk target limit dan ambang batas.
-   - Tabel `public.shopping_history` dengan snapshot JSONB.
+   - Tabel `public.wallets` untuk saldo uang belanja kas dipegang.
+   - Tabel `public.shopping_history` dengan snapshot JSONB, `cash_before`, dan `cash_after`.
    - Kebijakan **Row Level Security (RLS)** aktif pada semua tabel (`auth.uid() = user_id`).
 4. Konfigurasikan file `.env` berdasarkan template [`.env.example`](.env.example).
 
@@ -158,19 +168,20 @@ Jika ingin menghubungkan aplikasi ke layanan cloud Supabase, berkas [`supabase-s
 
 ```
 c:\Users\Student\groceryapp/
-├── index.html               # Halaman utama aplikasi (Dashboard, Belanja, Anggaran, Riwayat, Modal)
+├── index.html                   # Halaman utama aplikasi (Dashboard, Belanja, Anggaran, Dompet Kas, Riwayat)
 ├── css/
-│   └── style.css            # Desain modern responsif (Hijau Segar, Putih Bersih, Grid Desktop & Mobile)
+│   └── style.css                # Desain modern responsif (Hijau Segar, Putih Bersih, Grid Desktop & Mobile)
 ├── js/
-│   └── app.js               # Pengendali utama (State, API, SSE Real-time, Event Handlers, Modals)
-├── server.js                # Server backend Node.js (PBKDF2 Auth, REST API, SSE Broadcaster, Data Isolation)
+│   └── app.js                   # Pengendali utama (State, API, SSE Real-time, Dompet Kas, Auto-Deduction)
+├── server.js                    # Server backend Node.js (PBKDF2 Auth, REST API, Wallet & Auto-Deduction, SSE)
 ├── data/
-│   └── database.json        # Penyimpanan persisten backend (Users, Items, Budget, History)
-├── test-app.js              # Test suite komprehensif (Unit, Integrasi, Security, Static Assets)
-├── test-e2e-simulation.js   # Test skenario sinkronisasi multi-perangkat (Laptop & Smartphone)
-├── supabase-schema.sql      # Skema database PostgreSQL & Supabase lengkap dengan RLS
-├── .env.example             # Contoh konfigurasi environment variables
-├── manifest.json            # Web App Manifest untuk dukungan PWA
-├── sw.js                    # Service Worker untuk caching & dukungan offline
-└── README.md                # Dokumentasi lengkap proyek
+│   └── database.json            # Penyimpanan persisten backend (Users, Items, Budget, Wallets, History)
+├── test-wallet-and-devices.js   # Test suite uang belanja dipegang, pemotongan otomatis, dan multi-device
+├── test-app.js                  # Test suite komprehensif (Unit, Integrasi, Security, Static Assets)
+├── test-e2e-simulation.js       # Test skenario sinkronisasi multi-perangkat (Laptop & Smartphone)
+├── supabase-schema.sql          # Skema database PostgreSQL & Supabase lengkap dengan RLS
+├── .env.example                 # Contoh konfigurasi environment variables
+├── manifest.json                # Web App Manifest untuk dukungan PWA
+├── sw.js                        # Service Worker untuk caching & dukungan offline
+└── README.md                    # Dokumentasi lengkap proyek
 ```
