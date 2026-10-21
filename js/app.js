@@ -105,7 +105,19 @@ function showToast(message, type = 'success') {
 // ============================================================================
 // API CLIENT WITH AUTOMATIC AUTH & ERROR HANDLING
 // ============================================================================
+const API_BASE = (function() {
+  if (typeof window === 'undefined') return '';
+  // If the frontend is served directly on port 3000, relative paths work directly
+  if (window.location.port === '3000') {
+    return '';
+  }
+  // If accessed via Live Server (port 5500, 8080, etc.), file://, or another dev server
+  const host = window.location.hostname || 'localhost';
+  return `http://${host}:3000`;
+})();
+
 async function api(path, options = {}) {
+  const url = path.startsWith('/api') ? `${API_BASE}${path}` : path;
   const headers = {
     'Content-Type': 'application/json',
     ...(options.headers || {})
@@ -116,19 +128,47 @@ async function api(path, options = {}) {
   }
 
   try {
-    const res = await fetch(path, { ...options, headers });
+    const res = await fetch(url, { ...options, headers });
     
+    // Safely extract text first to prevent raw "Unexpected token '<'"
+    const rawText = await res.text();
+    let data = null;
+
+    if (rawText && rawText.trim().length > 0) {
+      if (rawText.trim().startsWith('<')) {
+        // If response is HTML (e.g. 404 from Live Server or static fallback)
+        throw new Error(
+          'Tidak dapat terhubung ke server API (merespons HTML). Pastikan server "node server.js" sedang aktif di http://localhost:3000.'
+        );
+      }
+      try {
+        data = JSON.parse(rawText);
+      } catch (jsonErr) {
+        throw new Error('Format data dari server tidak valid.');
+      }
+    }
+
     if (res.status === 401) {
+      // If this was a login or register attempt, return the server error message directly
+      if (path.includes('/api/auth/login') || path.includes('/api/auth/register')) {
+        throw new Error((data && data.error) || 'Username atau password salah.');
+      }
       handleSessionExpired();
       throw new Error('Sesi tidak valid atau telah berakhir. Silakan login kembali.');
     }
 
-    const data = await res.json();
     if (!res.ok) {
-      throw new Error(data.error || 'Terjadi kesalahan sistem.');
+      throw new Error((data && data.error) || `Terjadi kesalahan sistem (Kode: ${res.status}).`);
     }
-    return data;
+
+    return data || {};
   } catch (err) {
+    if (err.name === 'TypeError' && String(err.message).toLowerCase().includes('fetch')) {
+      throw new Error('Tidak dapat terhubung ke server backend. Pastikan "node server.js" sedang berjalan di terminal.');
+    }
+    if (String(err.message).includes('Unexpected token')) {
+      throw new Error('Respon server bukan JSON. Pastikan server backend Node.js (port 3000) sedang berjalan.');
+    }
     throw err;
   }
 }
@@ -160,7 +200,7 @@ function initRealtimeSync() {
   const badgeText = document.getElementById('syncStatusText');
 
   try {
-    const sse = new EventSource(`/api/sync/events?token=${encodeURIComponent(App.token)}`);
+    const sse = new EventSource(`${API_BASE}/api/sync/events?token=${encodeURIComponent(App.token)}`);
     App.sseEventSource = sse;
 
     sse.addEventListener('connected', () => {
@@ -1148,16 +1188,17 @@ async function handleLoginSubmit(e) {
   if (e && e.preventDefault) e.preventDefault();
   const email = document.getElementById('loginEmailInput').value.trim();
   const password = document.getElementById('loginPasswordInput').value;
+  const autoCreate = document.getElementById('chkAutoCreateAccount')?.checked || false;
 
   if (!email || !password) {
-    showAuthError('Email dan password wajib diisi.');
+    showAuthError('Username/email dan password wajib diisi.');
     return;
   }
 
   try {
     const res = await api('/api/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, password, auto_create: autoCreate })
     });
 
     App.token = res.token;
@@ -1174,25 +1215,21 @@ async function handleLoginSubmit(e) {
 }
 
 async function handleRegisterSubmit(e) {
-  e.preventDefault();
+  if (e && e.preventDefault) e.preventDefault();
   const name = document.getElementById('regNameInput').value.trim();
   const email = document.getElementById('regEmailInput').value.trim();
   const password = document.getElementById('regPasswordInput').value;
-  const confirm = document.getElementById('regPasswordConfirmInput').value;
+  const confirm = document.getElementById('regPasswordConfirmInput')?.value || '';
 
-  if (!name || name.length < 2) {
-    showAuthError('Nama lengkap minimal 2 karakter.');
+  if (!email) {
+    showAuthError('Username atau email wajib diisi.');
     return;
   }
-  if (!email || !email.includes('@')) {
-    showAuthError('Format email tidak valid.');
+  if (!password) {
+    showAuthError('Password wajib diisi.');
     return;
   }
-  if (!password || password.length < 6) {
-    showAuthError('Password minimal 6 karakter.');
-    return;
-  }
-  if (password !== confirm) {
+  if (confirm && password !== confirm) {
     showAuthError('Konfirmasi password tidak cocok.');
     return;
   }
@@ -1210,7 +1247,7 @@ async function handleRegisterSubmit(e) {
     closeAuthModal();
     initRealtimeSync();
     await fetchAllData();
-    showToast(`Akun berhasil dibuat! Selamat datang, ${res.user.name}!`, 'success');
+    showToast(`Akun "${res.user.name}" berhasil dibuat & aktif!`, 'success');
   } catch (err) {
     showAuthError(err.message);
   }
@@ -1449,7 +1486,7 @@ async function initApp() {
   document.getElementById('btnSubmitForgot')?.addEventListener('click', async () => {
     const email = document.getElementById('inputForgotEmail').value.trim();
     if (!email) {
-      showToast('Alamat email wajib diisi.', 'warning');
+      showToast('Username atau alamat email wajib diisi.', 'warning');
       return;
     }
     try {

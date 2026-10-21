@@ -527,32 +527,32 @@ const server = http.createServer(async (req, res) => {
   const pathname = parsedUrl.pathname;
 
   // --------------------------------------------------------------------------
-  // AUTHENTICATION ROUTES
+  // AUTHENTICATION ROUTES (BEBAS AKUN & PASSWORD APA SAJA)
   // --------------------------------------------------------------------------
   if (pathname === '/api/auth/register' && req.method === 'POST') {
     try {
       const { name, email, password, initial_cash } = await parseBody(req);
       
-      if (!name || name.trim().length < 2) {
-        return jsonResponse(res, 400, { error: 'Nama minimal 2 karakter.' });
+      const username = (email || '').trim();
+      if (!username) {
+        return jsonResponse(res, 400, { error: 'Username atau email wajib diisi.' });
       }
-      if (!email || !email.includes('@') || !email.includes('.')) {
-        return jsonResponse(res, 400, { error: 'Format email tidak valid.' });
-      }
-      if (!password || password.length < 6) {
-        return jsonResponse(res, 400, { error: 'Password minimal 6 karakter.' });
+      if (!password || String(password).trim().length === 0) {
+        return jsonResponse(res, 400, { error: 'Password wajib diisi.' });
       }
 
-      const normalizedEmail = email.trim().toLowerCase();
+      const displayName = (name && name.trim()) ? name.trim() : username;
+      const normalizedEmail = username.toLowerCase();
+
       if (db.users.some(u => u.email === normalizedEmail)) {
-        return jsonResponse(res, 409, { error: 'Email sudah terdaftar. Silakan gunakan email lain atau login.' });
+        return jsonResponse(res, 409, { error: `Akun "${username}" sudah terdaftar. Silakan login atau gunakan nama lain.` });
       }
 
-      const { salt, hash } = hashPassword(password);
+      const { salt, hash } = hashPassword(String(password));
       const userId = 'usr_' + crypto.randomBytes(8).toString('hex');
       const newUser = {
         id: userId,
-        name: name.trim(),
+        name: displayName,
         email: normalizedEmail,
         salt,
         password_hash: hash,
@@ -561,6 +561,7 @@ const server = http.createServer(async (req, res) => {
       db.users.push(newUser);
 
       // Create initial budget setting
+      if (!db.budget_settings) db.budget_settings = [];
       db.budget_settings.push({
         user_id: userId,
         budget_limit: 500000,
@@ -601,20 +602,56 @@ const server = http.createServer(async (req, res) => {
 
   if (pathname === '/api/auth/login' && req.method === 'POST') {
     try {
-      const { email, password } = await parseBody(req);
-      if (!email || !password) {
-        return jsonResponse(res, 400, { error: 'Email dan password wajib diisi.' });
+      const { email, password, auto_create } = await parseBody(req);
+      const username = (email || '').trim();
+      if (!username || !password) {
+        return jsonResponse(res, 400, { error: 'Username/Email dan password wajib diisi.' });
       }
 
-      const normalizedEmail = email.trim().toLowerCase();
-      const user = db.users.find(u => u.email === normalizedEmail);
+      const normalizedEmail = username.toLowerCase();
+      let user = db.users.find(u => u.email === normalizedEmail);
+
       if (!user) {
-        return jsonResponse(res, 401, { error: 'Email atau password salah.' });
-      }
-
-      const isMatch = verifyPassword(password, user.salt, user.password_hash);
-      if (!isMatch) {
-        return jsonResponse(res, 401, { error: 'Email atau password salah.' });
+        // If auto_create requested, create account seamlessly
+        if (auto_create) {
+          const { salt, hash } = hashPassword(String(password));
+          const userId = 'usr_' + crypto.randomBytes(8).toString('hex');
+          user = {
+            id: userId,
+            name: username,
+            email: normalizedEmail,
+            salt,
+            password_hash: hash,
+            created_at: new Date().toISOString()
+          };
+          db.users.push(user);
+          if (!db.budget_settings) db.budget_settings = [];
+          db.budget_settings.push({
+            user_id: userId,
+            budget_limit: 500000,
+            alert_caution_percent: 75,
+            alert_danger_percent: 90,
+            updated_at: new Date().toISOString()
+          });
+          if (!db.wallets) db.wallets = [];
+          db.wallets.push({
+            user_id: userId,
+            initial_cash: 500000,
+            current_cash: 500000,
+            updated_at: new Date().toISOString()
+          });
+          saveDatabase();
+        } else {
+          return jsonResponse(res, 401, {
+            error: `Akun "${username}" belum terdaftar. Silakan buka tab "Daftar Akun Baru" atau centang opsi buat akun otomatis.`,
+            not_found: true
+          });
+        }
+      } else {
+        const isMatch = verifyPassword(String(password), user.salt, user.password_hash);
+        if (!isMatch) {
+          return jsonResponse(res, 401, { error: 'Password salah untuk akun ini.' });
+        }
       }
 
       // Generate session token
@@ -1008,6 +1045,15 @@ const server = http.createServer(async (req, res) => {
     } catch (err) {
       return jsonResponse(res, 500, { error: err.message });
     }
+  }
+
+  // --------------------------------------------------------------------------
+  // UNMATCHED API ROUTE GUARD (ALWAYS JSON 404, NEVER HTML)
+  // --------------------------------------------------------------------------
+  if (pathname.startsWith('/api/')) {
+    return jsonResponse(res, 404, {
+      error: `Endpoint API "${pathname}" tidak ditemukan.`
+    });
   }
 
   // --------------------------------------------------------------------------

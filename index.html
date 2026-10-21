@@ -615,22 +615,28 @@
         <!-- Form: LOGIN -->
         <form id="formAuthLogin" onsubmit="return false;">
           <div class="form-group">
-            <label class="form-label" for="loginEmailInput">Alamat Email *</label>
-            <input type="email" class="form-input" id="loginEmailInput" placeholder="nama@email.com" required autocomplete="email">
+            <label class="form-label" for="loginEmailInput">Username atau Email Bebas *</label>
+            <input type="text" class="form-input" id="loginEmailInput" placeholder="Username / nama akun bebas (cth: budi, siti, user1)" required autocomplete="username">
           </div>
           <div class="form-group">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
-              <label class="form-label" for="loginPasswordInput" style="margin-bottom: 0;">Kata Sandi (Password) *</label>
+              <label class="form-label" for="loginPasswordInput" style="margin-bottom: 0;">Password Bebas *</label>
               <button type="button" id="btnForgotPassTrigger" style="font-size: 0.76rem; color: var(--primary-600); background: none; border: none; cursor: pointer; font-weight: 600;">Lupa Password?</button>
             </div>
             <div style="position: relative;">
-              <input type="password" class="form-input" id="loginPasswordInput" placeholder="••••••••" required autocomplete="current-password">
+              <input type="password" class="form-input" id="loginPasswordInput" placeholder="Password bebas (cth: 123)" required autocomplete="current-password">
               <button type="button" class="btn-toggle-eye" id="btnToggleLoginPass" style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--neutral-400); cursor: pointer;">
                 <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
               </button>
             </div>
           </div>
-          <button type="submit" class="btn-primary" id="btnSubmitLogin" style="width: 100%; height: 44px; margin-top: 0.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+            <input type="checkbox" id="chkAutoCreateAccount" style="accent-color: var(--primary-600); width: 16px; height: 16px; cursor: pointer;">
+            <label for="chkAutoCreateAccount" style="font-size: 0.78rem; color: var(--neutral-700); cursor: pointer; user-select: none;">
+              Otomatis buat akun jika belum ada (langsung login bebas)
+            </label>
+          </div>
+          <button type="submit" class="btn-primary" id="btnSubmitLogin" style="width: 100%; height: 44px; margin-top: 0.25rem;">
             <i data-lucide="log-in"></i> Masuk ke Akun
           </button>
         </form>
@@ -638,20 +644,20 @@
         <!-- Form: REGISTER -->
         <form id="formAuthRegister" style="display: none;" onsubmit="return false;">
           <div class="form-group">
-            <label class="form-label" for="regNameInput">Nama Lengkap *</label>
-            <input type="text" class="form-input" id="regNameInput" placeholder="Nama Lengkap Anda" required autocomplete="name">
+            <label class="form-label" for="regNameInput">Nama Lengkap (Bebas / Opsional)</label>
+            <input type="text" class="form-input" id="regNameInput" placeholder="Nama Anda (opsional)" autocomplete="name">
           </div>
           <div class="form-group">
-            <label class="form-label" for="regEmailInput">Alamat Email *</label>
-            <input type="email" class="form-input" id="regEmailInput" placeholder="nama@email.com" required autocomplete="email">
+            <label class="form-label" for="regEmailInput">Username atau Email Bebas *</label>
+            <input type="text" class="form-input" id="regEmailInput" placeholder="Username / nama akun bebas (cth: budi, siti, user1)" required autocomplete="username">
           </div>
           <div class="form-group">
-            <label class="form-label" for="regPasswordInput">Kata Sandi (Min. 6 Karakter) *</label>
-            <input type="password" class="form-input" id="regPasswordInput" placeholder="••••••••" required autocomplete="new-password">
+            <label class="form-label" for="regPasswordInput">Password Bebas (Panjang Berapa Saja) *</label>
+            <input type="password" class="form-input" id="regPasswordInput" placeholder="Password bebas (contoh: 123)" required autocomplete="new-password">
           </div>
           <div class="form-group">
-            <label class="form-label" for="regPasswordConfirmInput">Konfirmasi Kata Sandi *</label>
-            <input type="password" class="form-input" id="regPasswordConfirmInput" placeholder="••••••••" required autocomplete="new-password">
+            <label class="form-label" for="regPasswordConfirmInput">Konfirmasi Password (Opsional)</label>
+            <input type="password" class="form-input" id="regPasswordConfirmInput" placeholder="Ulangi password (opsional)" autocomplete="new-password">
           </div>
           <button type="submit" class="btn-primary" id="btnSubmitRegister" style="width: 100%; height: 44px; margin-top: 0.5rem;">
             <i data-lucide="user-plus"></i> Buat Akun Baru
@@ -964,8 +970,8 @@
           Masukkan alamat email yang terdaftar untuk menerima petunjuk pemulihan kata sandi.
         </p>
         <div class="form-group">
-          <label class="form-label" for="inputForgotEmail">Alamat Email *</label>
-          <input type="email" class="form-input" id="inputForgotEmail" placeholder="nama@email.com" required>
+          <label class="form-label" for="inputForgotEmail">Username atau Alamat Email *</label>
+          <input type="text" class="form-input" id="inputForgotEmail" placeholder="Username / email terdaftar" required>
         </div>
         <div id="forgotSuccessBox" style="display: none; background: var(--primary-50); border: 1px solid var(--primary-200); color: var(--primary-800); border-radius: var(--radius-md); padding: 0.75rem; font-size: 0.82rem; margin-top: 0.75rem;">
           Instruksi pemulihan berhasil diproses!
