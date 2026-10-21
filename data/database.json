@@ -199,6 +199,94 @@
       "salt": "3217901f87e6115f7a52470f2c9a4ba1",
       "password_hash": "4acee67a928c762b9bc7a1df008a2efd9a2adc235dee236350af969ca58dc11733be70ba9d55647866363b049d5f8a7fc941c761118c13719cfe3f82449187b0",
       "created_at": "2026-10-21T04:25:57.017Z"
+    },
+    {
+      "id": "dev_laptop_1792557281082",
+      "name": "Perangkat 1082",
+      "email": "dev_laptop_1792557281082@device.local",
+      "salt": "",
+      "password_hash": "",
+      "created_at": "2026-10-21T04:34:41.120Z"
+    },
+    {
+      "id": "dev_laptop_1792557334160",
+      "name": "Laptop Kerja Kantor",
+      "email": "dev_laptop_1792557334160@device.local",
+      "salt": "",
+      "password_hash": "",
+      "created_at": "2026-10-21T04:35:34.198Z"
+    },
+    {
+      "id": "dev_phone_1792557334160",
+      "name": "Perangkat 4160",
+      "email": "dev_phone_1792557334160@device.local",
+      "salt": "",
+      "password_hash": "",
+      "created_at": "2026-10-21T04:35:34.222Z"
+    },
+    {
+      "id": "dev_laptop_1792557391664",
+      "name": "Laptop Kerja Kantor",
+      "email": "dev_laptop_1792557391664@device.local",
+      "salt": "",
+      "password_hash": "",
+      "created_at": "2026-10-21T04:36:31.697Z"
+    },
+    {
+      "id": "dev_phone_1792557391664",
+      "name": "Perangkat 1664",
+      "email": "dev_phone_1792557391664@device.local",
+      "salt": "",
+      "password_hash": "",
+      "created_at": "2026-10-21T04:36:31.720Z"
+    },
+    {
+      "id": "usr_d32f14170e569dea",
+      "name": "Pengguna Bebas",
+      "email": "user_1792557397902",
+      "salt": "3890e474edc01485684d2fdc61eed990",
+      "password_hash": "e058c1f7b4af5fe32a66491f16efe4db26ac393068b496971a0df5775a8cbc733fea4b60170b7a69a7c66c4a466e186ee0d3cacaef5e69abb740a1b7ddd1c0ee",
+      "created_at": "2026-10-21T04:36:38.001Z"
+    },
+    {
+      "id": "usr_1cbf9166b2971e25",
+      "name": "auto_1792557398156",
+      "email": "auto_1792557398156",
+      "salt": "1cf554f924e297a0061d90ec732a510b",
+      "password_hash": "5559344b0d3bc48c64a76fccf3ae7db5eaa2bdb1cfc1064ab983005e1a4d34c18324f4b5dc9ce70a93c84123bdd067aa1f4ad89d2d1236c64f706af927fe9612",
+      "created_at": "2026-10-21T04:36:38.229Z"
+    },
+    {
+      "id": "usr_60a4a54f5f5ed188",
+      "name": "Siti Rahmawati",
+      "email": "user_1792557408195@grocery.com",
+      "salt": "dd1578c804b85d0c4d2482979e4ff824",
+      "password_hash": "7fd810dfc9343ecbca3fb44024000f9d578b1e50aeb538f3f5c4ad93ac4456fd385ccdbdc12fe8ae6e577b5a84f5653f26582885ffa7dda96565e0f5060b7aad",
+      "created_at": "2026-10-21T04:36:48.267Z"
+    },
+    {
+      "id": "usr_6fd1b06726ac5954",
+      "name": "User C Isolation",
+      "email": "userc_1792557408288@grocery.com",
+      "salt": "c10fb3c7e75a0a93073c0a71fe3e45d1",
+      "password_hash": "cc9c8c656b1f1ae7f24b523fca53433412fbb28becccd147ce3d4ca958ea0c81dd6ecbf9aa85328f4f0f74b5589c2ae7f1bac65966d294d4155937ef72df4415",
+      "created_at": "2026-10-21T04:36:48.364Z"
+    },
+    {
+      "id": "usr_697f7e1f0eb44bbd",
+      "name": "Cecilia Renata",
+      "email": "cecil_1792557413077@mutiarabangsa.sch.id",
+      "salt": "c8ade444129748eaa00af909b6e035cf",
+      "password_hash": "d7193d39b11bedab457f54dc28cfc2a7f970189f15e22c9a388d12b8f7b9245a413e00d42d4416ca07aa00433c259a5207db6e6e7630bbd6351edd75ffcdcdc4",
+      "created_at": "2026-10-21T04:36:53.185Z"
+    },
+    {
+      "id": "usr_8039e70486f7f34b",
+      "name": "Akun Lain B",
+      "email": "other_1792557413362@grocery.com",
+      "salt": "0726777ba31cc7623cd12895430ffbb6",
+      "password_hash": "edc874585078c6cbbf12084524f6063d0b14a68a9d543a3cf02c56ebfa3e223c6c8a6adb94b8fc9173c1ad6cfc552fd06e73fabc18c9f3a814bb6547cd51564a",
+      "created_at": "2026-10-21T04:36:53.430Z"
     }
   ],
   "sessions": [
@@ -471,6 +559,72 @@
       "user_id": "usr_11cd9150b316fd73",
       "created_at": "2026-10-21T04:25:57.017Z",
       "expires_at": "2026-11-20T04:25:57.017Z"
+    },
+    {
+      "token": "tok_8cb0a3478dd872670f7cfb597e3a90da69c640829aa058a8",
+      "user_id": "usr_d32f14170e569dea",
+      "created_at": "2026-10-21T04:36:38.001Z",
+      "expires_at": "2026-11-20T04:36:38.001Z"
+    },
+    {
+      "token": "tok_21afd426170ecacdd2dd40a9d1ca153a81373ab70388523b",
+      "user_id": "usr_d32f14170e569dea",
+      "created_at": "2026-10-21T04:36:38.083Z",
+      "expires_at": "2026-11-20T04:36:38.083Z"
+    },
+    {
+      "token": "tok_ec01abf6ba9aa99c66c95c65485f8455b34472569fef944e",
+      "user_id": "usr_1cbf9166b2971e25",
+      "created_at": "2026-10-21T04:36:38.230Z",
+      "expires_at": "2026-11-20T04:36:38.230Z"
+    },
+    {
+      "token": "tok_0acb55a45c68fdb98412000bd186b8dc0e84f5afed6dee29",
+      "user_id": "usr_demo_101",
+      "created_at": "2026-10-21T04:36:43.071Z",
+      "expires_at": "2026-11-20T04:36:43.071Z"
+    },
+    {
+      "token": "tok_681958352f0cf6d6b4ea1476c014c1cc40f86552f9d1cadb",
+      "user_id": "usr_demo_102",
+      "created_at": "2026-10-21T04:36:43.152Z",
+      "expires_at": "2026-11-20T04:36:43.152Z"
+    },
+    {
+      "token": "tok_5519a12731180859551cb0568b6e8b8beb9989ff3487f2d9",
+      "user_id": "usr_demo_101",
+      "created_at": "2026-10-21T04:36:48.109Z",
+      "expires_at": "2026-11-20T04:36:48.109Z"
+    },
+    {
+      "token": "tok_8ffee3793c897411b6ecffa621790f66f4f069a1a6a38277",
+      "user_id": "usr_60a4a54f5f5ed188",
+      "created_at": "2026-10-21T04:36:48.267Z",
+      "expires_at": "2026-11-20T04:36:48.267Z"
+    },
+    {
+      "token": "tok_699bef1e7d5f6847d32ff0d9e25e1e2f872ec36bd054aff3",
+      "user_id": "usr_6fd1b06726ac5954",
+      "created_at": "2026-10-21T04:36:48.364Z",
+      "expires_at": "2026-11-20T04:36:48.364Z"
+    },
+    {
+      "token": "tok_8e49970dcc0f82a43afc083d07c8e0dd23979a175885da27",
+      "user_id": "usr_697f7e1f0eb44bbd",
+      "created_at": "2026-10-21T04:36:53.185Z",
+      "expires_at": "2026-11-20T04:36:53.185Z"
+    },
+    {
+      "token": "tok_3ac807dbcff2aacdb71e0d70650b48ebb24378289f98522b",
+      "user_id": "usr_697f7e1f0eb44bbd",
+      "created_at": "2026-10-21T04:36:53.357Z",
+      "expires_at": "2026-11-20T04:36:53.357Z"
+    },
+    {
+      "token": "tok_1e4f0deaab49bb34411b58f5de3f78c90885778d3755ed3f",
+      "user_id": "usr_8039e70486f7f34b",
+      "created_at": "2026-10-21T04:36:53.431Z",
+      "expires_at": "2026-11-20T04:36:53.431Z"
     }
   ],
   "grocery_items": [
@@ -668,6 +822,45 @@
       "notes": "Diambil dari rak depan",
       "created_at": "2026-10-21T04:25:56.773Z",
       "updated_at": "2026-10-21T04:25:56.853Z"
+    },
+    {
+      "id": "item_b46a14959b6aa217",
+      "user_id": "dev_phone_1792557334160",
+      "name": "Kopi Kenangan Botol",
+      "category": "Snacks & Beverages",
+      "quantity": 2,
+      "unit": "pcs",
+      "price": 15000,
+      "is_purchased": false,
+      "notes": "",
+      "created_at": "2026-10-21T04:35:34.232Z",
+      "updated_at": "2026-10-21T04:35:34.232Z"
+    },
+    {
+      "id": "item_3ebba8b59eb3ce88",
+      "user_id": "dev_phone_1792557391664",
+      "name": "Kopi Kenangan Botol",
+      "category": "Snacks & Beverages",
+      "quantity": 2,
+      "unit": "pcs",
+      "price": 15000,
+      "is_purchased": false,
+      "notes": "",
+      "created_at": "2026-10-21T04:36:31.729Z",
+      "updated_at": "2026-10-21T04:36:31.729Z"
+    },
+    {
+      "id": "item_8eae4c7215fb891b",
+      "user_id": "usr_697f7e1f0eb44bbd",
+      "name": "Beras 5 kg",
+      "category": "Fruits & Vegetables",
+      "quantity": 2,
+      "unit": "pack",
+      "price": 76000,
+      "is_purchased": true,
+      "notes": "Diambil dari rak depan",
+      "created_at": "2026-10-21T04:36:53.194Z",
+      "updated_at": "2026-10-21T04:36:53.280Z"
     }
   ],
   "budget_settings": [
@@ -845,6 +1038,83 @@
       "alert_caution_percent": 75,
       "alert_danger_percent": 90,
       "updated_at": "2026-10-21T04:25:57.017Z"
+    },
+    {
+      "user_id": "dev_laptop_1792557281082",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:34:41.122Z"
+    },
+    {
+      "user_id": "dev_laptop_1792557334160",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:35:34.199Z"
+    },
+    {
+      "user_id": "dev_phone_1792557334160",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:35:34.222Z"
+    },
+    {
+      "user_id": "dev_laptop_1792557391664",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:36:31.698Z"
+    },
+    {
+      "user_id": "dev_phone_1792557391664",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:36:31.720Z"
+    },
+    {
+      "user_id": "usr_d32f14170e569dea",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:36:38.001Z"
+    },
+    {
+      "user_id": "usr_1cbf9166b2971e25",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:36:38.229Z"
+    },
+    {
+      "user_id": "usr_60a4a54f5f5ed188",
+      "budget_limit": 750000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:36:48.370Z"
+    },
+    {
+      "user_id": "usr_6fd1b06726ac5954",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:36:48.364Z"
+    },
+    {
+      "user_id": "usr_697f7e1f0eb44bbd",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:36:53.185Z"
+    },
+    {
+      "user_id": "usr_8039e70486f7f34b",
+      "budget_limit": 500000,
+      "alert_caution_percent": 75,
+      "alert_danger_percent": 90,
+      "updated_at": "2026-10-21T04:36:53.431Z"
     }
   ],
   "shopping_history": [
@@ -1165,6 +1435,108 @@
         }
       ],
       "completed_at": "2026-10-21T04:25:52.188Z"
+    },
+    {
+      "id": "trip_980fd37fdf83118c",
+      "user_id": "dev_laptop_1792557334160",
+      "store_name": "Supermarket Bintang",
+      "total_spent": 0,
+      "cash_before": 700000,
+      "cash_after": 700000,
+      "items_count": 0,
+      "items_snapshot": [],
+      "completed_at": "2026-10-21T04:35:34.244Z"
+    },
+    {
+      "id": "trip_25627d02e0150700",
+      "user_id": "dev_laptop_1792557391664",
+      "store_name": "Supermarket Bintang",
+      "total_spent": 38000,
+      "cash_before": 700000,
+      "cash_after": 662000,
+      "items_count": 1,
+      "items_snapshot": [
+        {
+          "id": "item_8283c998f10f64bb",
+          "user_id": "dev_laptop_1792557391664",
+          "name": "Minyak Goreng 2 Liter",
+          "category": "Household",
+          "quantity": 1,
+          "unit": "pouch",
+          "price": 38000,
+          "is_purchased": false,
+          "notes": "",
+          "created_at": "2026-10-21T04:36:31.715Z",
+          "updated_at": "2026-10-21T04:36:31.715Z"
+        }
+      ],
+      "completed_at": "2026-10-21T04:36:31.737Z"
+    },
+    {
+      "id": "trip_30ea524de8e91b58",
+      "user_id": "usr_demo_101",
+      "store_name": "Grand Lucky SCBD",
+      "total_spent": 225000,
+      "cash_before": 750000,
+      "cash_after": 525000,
+      "items_count": 2,
+      "items_snapshot": [
+        {
+          "name": "Daging Wagyu",
+          "qty": 1,
+          "price": 175000,
+          "unit": "pack"
+        },
+        {
+          "name": "Keju Mozzarella",
+          "qty": 1,
+          "price": 50000,
+          "unit": "pack"
+        }
+      ],
+      "completed_at": "2026-10-21T04:36:43.195Z"
+    },
+    {
+      "id": "trip_dfbb2eb50d60b124",
+      "user_id": "usr_demo_101",
+      "store_name": "Indomaret Fresh",
+      "total_spent": 125000,
+      "cash_before": 525000,
+      "cash_after": 400000,
+      "items_count": 2,
+      "items_snapshot": [
+        {
+          "name": "Susu UHT 2L",
+          "qty": 2,
+          "price": 40000,
+          "unit": "liter"
+        },
+        {
+          "name": "Roti Gandum",
+          "qty": 1,
+          "price": 45000,
+          "unit": "pack"
+        }
+      ],
+      "completed_at": "2026-10-21T04:36:43.202Z"
+    },
+    {
+      "id": "trip_6f535597a9d84cd9",
+      "user_id": "usr_60a4a54f5f5ed188",
+      "store_name": "Hypermart Karawaci",
+      "total_spent": 135000,
+      "cash_before": 500000,
+      "cash_after": 365000,
+      "items_count": 1,
+      "items_snapshot": [
+        {
+          "name": "Apel Royal Gala 1 kg",
+          "qty": 3,
+          "unit": "kg",
+          "price": 45000
+        }
+      ],
+      "completed_at": "2026-10-21T04:36:48.373Z"
     }
   ],
   "wallets": [
@@ -1172,7 +1544,7 @@
       "user_id": "usr_demo_101",
       "initial_cash": 750000,
       "current_cash": 400000,
-      "updated_at": "2026-10-21T04:25:45.305Z"
+      "updated_at": "2026-10-21T04:36:43.201Z"
     },
     {
       "user_id": "usr_1847ec9431699dc7",
@@ -1317,6 +1689,72 @@
       "initial_cash": 500000,
       "current_cash": 500000,
       "updated_at": "2026-10-21T04:25:57.017Z"
+    },
+    {
+      "user_id": "dev_laptop_1792557281082",
+      "initial_cash": 500000,
+      "current_cash": 500000,
+      "updated_at": "2026-10-21T04:34:41.135Z"
+    },
+    {
+      "user_id": "dev_laptop_1792557334160",
+      "initial_cash": 700000,
+      "current_cash": 700000,
+      "updated_at": "2026-10-21T04:35:34.244Z"
+    },
+    {
+      "user_id": "dev_phone_1792557334160",
+      "initial_cash": 250000,
+      "current_cash": 250000,
+      "updated_at": "2026-10-21T04:35:34.228Z"
+    },
+    {
+      "user_id": "dev_laptop_1792557391664",
+      "initial_cash": 700000,
+      "current_cash": 662000,
+      "updated_at": "2026-10-21T04:36:31.737Z"
+    },
+    {
+      "user_id": "dev_phone_1792557391664",
+      "initial_cash": 250000,
+      "current_cash": 250000,
+      "updated_at": "2026-10-21T04:36:31.725Z"
+    },
+    {
+      "user_id": "usr_d32f14170e569dea",
+      "initial_cash": 500000,
+      "current_cash": 500000,
+      "updated_at": "2026-10-21T04:36:38.001Z"
+    },
+    {
+      "user_id": "usr_1cbf9166b2971e25",
+      "initial_cash": 500000,
+      "current_cash": 500000,
+      "updated_at": "2026-10-21T04:36:38.229Z"
+    },
+    {
+      "user_id": "usr_60a4a54f5f5ed188",
+      "initial_cash": 500000,
+      "current_cash": 365000,
+      "updated_at": "2026-10-21T04:36:48.373Z"
+    },
+    {
+      "user_id": "usr_6fd1b06726ac5954",
+      "initial_cash": 500000,
+      "current_cash": 500000,
+      "updated_at": "2026-10-21T04:36:48.364Z"
+    },
+    {
+      "user_id": "usr_697f7e1f0eb44bbd",
+      "initial_cash": 500000,
+      "current_cash": 500000,
+      "updated_at": "2026-10-21T04:36:53.185Z"
+    },
+    {
+      "user_id": "usr_8039e70486f7f34b",
+      "initial_cash": 500000,
+      "current_cash": 500000,
+      "updated_at": "2026-10-21T04:36:53.431Z"
     }
   ]
 }

@@ -73,19 +73,16 @@
           <span id="syncStatusText">Tersinkronisasi</span>
         </div>
 
-        <!-- Logged-in User Profile Badge -->
-        <div class="user-profile-badge" id="userProfileBadge" style="display: none;" title="Akun Pengguna">
-          <div class="user-avatar" id="userAvatarText">U</div>
-          <span class="user-name-text" id="headerUserName">Pengguna</span>
-          <button class="btn-header-logout" id="btnLogoutHeader" title="Keluar / Logout">
-            <i data-lucide="log-out" style="width: 16px; height: 16px;"></i>
+        <!-- Active Device Profile Badge (No Login Required, Distinct per Device) -->
+        <div class="user-profile-badge" id="userProfileBadge" style="display: flex; cursor: pointer;" title="Klik untuk lihat pengaturan perangkat ini">
+          <div class="user-avatar" id="userAvatarText" style="background: var(--primary-100); color: var(--primary-700);">
+            <i data-lucide="smartphone" style="width: 14px; height: 14px;"></i>
+          </div>
+          <span class="user-name-text" id="headerUserName">Perangkat Ini</span>
+          <button class="btn-header-logout" id="btnDeviceSettings" title="Pengaturan Perangkat" style="border: none; background: transparent; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; padding: 2px;">
+            <i data-lucide="settings" style="width: 15px; height: 15px;"></i>
           </button>
         </div>
-
-        <!-- Login Trigger Button (When logged out) -->
-        <button class="btn-primary" id="btnLoginTrigger" style="display: none; padding: 0.45rem 0.95rem; font-size: 0.82rem;">
-          <i data-lucide="log-in" style="width: 14px; height: 14px;"></i> Masuk
-        </button>
       </div>
 
     </div>
@@ -981,6 +978,55 @@
         <button class="btn-secondary" id="btnCancelForgot">Tutup</button>
         <button class="btn-primary" id="btnSubmitForgot">
           <i data-lucide="send"></i> Kirim Instruksi
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 6: PENGATURAN PERANGKAT (BEBAS TANPA LOGIN)
+       ======================================================================== -->
+  <div class="modal-backdrop" id="deviceModalBackdrop">
+    <div class="modal-dialog-card" style="max-width: 440px;">
+      <div class="modal-dialog-header">
+        <h3 style="display: flex; align-items: center; gap: 0.5rem;">
+          <i data-lucide="smartphone" style="width: 20px; height: 20px; color: var(--primary-600);"></i>
+          <span>Profil Perangkat Ini</span>
+        </h3>
+        <button class="modal-close-btn" id="btnCloseDeviceModal">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <div class="modal-dialog-body">
+        <div style="background: var(--primary-50); border: 1px solid var(--primary-200); border-radius: var(--radius-md); padding: 0.85rem; margin-bottom: 1.25rem;">
+          <div style="font-size: 0.84rem; font-weight: 700; color: var(--primary-900); margin-bottom: 0.25rem;">
+            ✅ Bebas Tanpa Perlu Login!
+          </div>
+          <div style="font-size: 0.77rem; color: var(--primary-800); line-height: 1.45;">
+            Setiap HP, Tablet, atau Laptop yang membuka aplikasi ini <b>otomatis memiliki data tersendiri</b> (daftar belanja, uang belanja kas, dan batas anggaran terpisah 100%).
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="inputDeviceName">Nama Perangkat Ini</label>
+          <input type="text" class="form-input" id="inputDeviceName" placeholder="Contoh: HP Saya, Laptop Kerja...">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">ID Unik Perangkat</label>
+          <input type="text" class="form-input" id="displayDeviceId" readonly style="background: var(--neutral-100); font-family: monospace; font-size: 0.8rem; color: var(--text-muted);">
+        </div>
+
+        <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 0.5rem;">
+          <button type="button" class="btn-secondary" id="btnResetDeviceData" style="width: 100%; font-size: 0.78rem; color: #dc2626; border-color: #fecaca; background: #fff5f5;">
+            <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i> Buat Profil Perangkat Baru (Ganti Data)
+          </button>
+        </div>
+      </div>
+      <div class="modal-dialog-footer">
+        <button type="button" class="btn-secondary" id="btnCancelDeviceModal">Tutup</button>
+        <button type="button" class="btn-primary" id="btnSaveDeviceModal">
+          <i data-lucide="check"></i> Simpan Nama
         </button>
       </div>
     </div>

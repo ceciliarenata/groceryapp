@@ -99,39 +99,52 @@ Buka peramban (Chrome / Edge / Firefox / Safari):
 
 ---
 
-## 🔑 Kredensial Akun Pengujian Multi-Perangkat (Multi-Device Accounts)
+## 📱 Bebas Tanpa Login & Otomatis Beda Tiap Perangkat (Zero-Login Device Architecture)
 
-Setiap perangkat dapat menggunakan akun yang berbeda secara mandiri dengan isolasi data 100%:
+Sesuai kebutuhan pengguna, **aplikasi kini langsung dapat digunakan tanpa perlu login atau memasukkan password sama sekali**:
 
-| Perangkat / Akun | Nama Pengguna | Email | Password | Uang Kas Bawaan | Keterangan |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Device 1 (Laptop/PC)** | Budi Pratama | `demo@grocery.com` | `Password123!` | Rp 500.000 | Akun Belanja Utama (Tersedia tombol 1-klik di modal login) |
-| **Device 2 (HP/Tablet)** | Siti Rahmawati | `siti@grocery.com` | `Password123!` | Rp 300.000 | Akun Perangkat Kedua (Tersedia tombol 1-klik di modal login) |
-| **Akun Baru Mandiri** | Nama Pendaftar | Sesuai pendaftaran | Minimal 6 karakter | Rp 500.000 (Default) | Daftar di tab *Daftar Akun Baru* pada sembarang perangkat |
-
-> [!NOTE]
-> Kedua akun di atas terisolasi penuh. Uang kas, daftar belanjaan, anggaran, dan riwayat belanja Siti tidak akan bercampur dengan Budi.
+1. **Otomatis Terisolasi Tiap Perangkat**:
+   - Ketika Anda membuka aplikasi di **Laptop** (`http://localhost:3000`), laptop otomatis memiliki ID perangkat dan data belanjaannya sendiri.
+   - Ketika Anda membuka aplikasi di **HP / Smartphone** (`http://192.168.0.210:3000`), HP Anda otomatis memiliki ID perangkat dan data belanjaannya sendiri.
+   - Daftar belanjaan, uang kas dipegang, dan anggaran di Laptop **tidak akan pernah bercampur** dengan HP.
+2. **Tanpa Form Login yang Mengganggu**:
+   - Langsung masuk ke Dashboard dan Daftar Belanja tanpa pop-up login.
+   - Tidak ada batasan email, tidak ada kendala format password.
+3. **Pengaturan & Ganti Perangkat**:
+   - Klik lencana perangkat di sudut kanan atas (ikon 📱) untuk melihat ID perangkat, mengganti nama perangkat, atau membuat profil baru.
 
 ---
 
-## 🧪 Menjalankan Pengujian Otomatis
+## 🧪 Rangkaian Pengujian Otomatis
 
-Proyek ini dilengkapi dengan 3 berkas pengujian otomatis:
+Proyek ini dilengkapi dengan 5 berkas pengujian otomatis:
 
-### 1. Pengujian Dompet Kas & Multi-Device (`test-wallet-and-devices.js`)
-Menguji login akun berbeda di device berbeda, penyesuaian uang belanja yang dipegang, dan pemotongan otomatis uang kas saat checkout:
+### 1. Pengujian Bebas Tanpa Login & Isolasi Antar-Perangkat (`test-no-login-devices.js`)
+Menguji koneksi langsung tanpa login, pemisahan data 100% antar-device, dan pemotongan otomatis uang kas saat checkout:
+```bash
+node test-no-login-devices.js
+```
+
+### 2. Pengujian Dompet Kas & Multi-Device (`test-wallet-and-devices.js`)
+Menguji penyesuaian uang belanja yang dipegang dan pemotongan otomatis uang kas saat checkout:
 ```bash
 node test-wallet-and-devices.js
 ```
 
-### 2. Pengujian Unit, Integrasi & Keamanan (`test-app.js`)
-Menguji penyajian aset statis, PWA, enkripsi password PBKDF2, proteksi route (401), validasi duplikasi email (409), CRUD barang, isolasi multi-tenant, pembaruan anggaran, dan riwayat checkout:
+### 3. Pengujian Keamanan JSON & Endpoint Bebas (`test-free-auth.js`)
+Menguji kebebasan username/password dan menjamin tidak ada respons error HTML yang memicu `"Unexpected token '<'"`:
+```bash
+node test-free-auth.js
+```
+
+### 4. Pengujian Unit, Integrasi & Keamanan (`test-app.js`)
+Menguji penyajian aset statis, PWA, route protection, CRUD 6 kategori, dan riwayat checkout:
 ```bash
 node test-app.js
 ```
 
-### 3. Pengujian Sinkronisasi Multi-Perangkat (`test-e2e-simulation.js`)
-Mensimulasikan skenario wajib sinkronisasi laptop dan smartphone:
+### 5. Pengujian Sinkronisasi Multi-Perangkat (`test-e2e-simulation.js`)
+Mensimulasikan skenario sinkronisasi real-time multi-perangkat:
 ```bash
 node test-e2e-simulation.js
 ```

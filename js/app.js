@@ -16,7 +16,8 @@
 // Global Application State
 const App = {
   currentUser: null,
-  token: localStorage.getItem('smartgrocery_token') || null,
+  deviceId: null,
+  token: null,
   items: [],
   budget: {
     budget_limit: 500000,
@@ -39,6 +40,41 @@ const App = {
 };
 
 let walletModalMode = 'set'; // 'set' | 'add'
+
+// ============================================================================
+// DEVICE IDENTIFICATION & ISOLATION (NO LOGIN NEEDED, DISTINCT PER DEVICE)
+// ============================================================================
+function getDeviceLabel() {
+  const ua = (typeof navigator !== 'undefined' && navigator.userAgent) ? navigator.userAgent : '';
+  if (/android/i.test(ua)) return 'HP Android';
+  if (/iphone|ipad|ipod/i.test(ua)) return 'iPhone / iPad';
+  if (/tablet/i.test(ua)) return 'Tablet';
+  if (/windows/i.test(ua)) return 'Laptop / PC Windows';
+  if (/macintosh|mac os x/i.test(ua)) return 'MacBook / Mac';
+  return 'Perangkat Ini';
+}
+
+function ensureDeviceId() {
+  let devId = localStorage.getItem('sgt_device_id');
+  if (!devId) {
+    devId = 'dev_' + Math.random().toString(36).substring(2, 8) + Date.now().toString(36);
+    localStorage.setItem('sgt_device_id', devId);
+  }
+  App.deviceId = devId;
+  App.token = devId;
+
+  let devName = localStorage.getItem('sgt_device_name');
+  if (!devName) {
+    devName = `${getDeviceLabel()} (${devId.slice(-4).toUpperCase()})`;
+    localStorage.setItem('sgt_device_name', devName);
+  }
+
+  App.currentUser = {
+    id: devId,
+    name: devName,
+    email: devId + '@device.local'
+  };
+}
 
 // ============================================================================
 // FORMATTING HELPERS
@@ -103,7 +139,7 @@ function showToast(message, type = 'success') {
 }
 
 // ============================================================================
-// API CLIENT WITH AUTOMATIC AUTH & ERROR HANDLING
+// API CLIENT WITH AUTOMATIC DEVICE HEADERS & ERROR HANDLING
 // ============================================================================
 const API_BASE = (function() {
   if (typeof window === 'undefined') return '';
@@ -118,8 +154,10 @@ const API_BASE = (function() {
 
 async function api(path, options = {}) {
   const url = path.startsWith('/api') ? `${API_BASE}${path}` : path;
+  const devId = App.deviceId || localStorage.getItem('sgt_device_id') || 'dev_default';
   const headers = {
     'Content-Type': 'application/json',
+    'X-Device-Id': devId,
     ...(options.headers || {})
   };
 
@@ -149,12 +187,9 @@ async function api(path, options = {}) {
     }
 
     if (res.status === 401) {
-      // If this was a login or register attempt, return the server error message directly
-      if (path.includes('/api/auth/login') || path.includes('/api/auth/register')) {
-        throw new Error((data && data.error) || 'Username atau password salah.');
-      }
+      // Re-initialize device id without interrupting user
       handleSessionExpired();
-      throw new Error('Sesi tidak valid atau telah berakhir. Silakan login kembali.');
+      throw new Error((data && data.error) || 'Sesi perangkat telah diperbarui.');
     }
 
     if (!res.ok) {
@@ -174,22 +209,14 @@ async function api(path, options = {}) {
 }
 
 function handleSessionExpired() {
-  App.currentUser = null;
-  App.token = null;
-  localStorage.removeItem('smartgrocery_token');
-  if (App.sseEventSource) {
-    App.sseEventSource.close();
-    App.sseEventSource = null;
-  }
-  renderHeaderUser();
-  openAuthModal('login');
+  ensureDeviceId();
 }
 
 // ============================================================================
 // REAL-TIME SERVER-SENT EVENTS (SSE) SYNCHRONIZATION
 // ============================================================================
 function initRealtimeSync() {
-  if (!App.token) return;
+  const devId = App.deviceId || localStorage.getItem('sgt_device_id') || 'dev_default';
 
   if (App.sseEventSource) {
     App.sseEventSource.close();
@@ -200,7 +227,7 @@ function initRealtimeSync() {
   const badgeText = document.getElementById('syncStatusText');
 
   try {
-    const sse = new EventSource(`${API_BASE}/api/sync/events?token=${encodeURIComponent(App.token)}`);
+    const sse = new EventSource(`${API_BASE}/api/sync/events?device_id=${encodeURIComponent(devId)}`);
     App.sseEventSource = sse;
 
     sse.addEventListener('connected', () => {
@@ -303,15 +330,11 @@ function renderHeaderUser() {
   const avatar = document.getElementById('userAvatarText');
   const name = document.getElementById('headerUserName');
 
-  if (App.currentUser) {
-    if (badge) badge.style.display = 'flex';
-    if (loginTrigger) loginTrigger.style.display = 'none';
-    if (avatar) avatar.textContent = (App.currentUser.name || 'U').charAt(0).toUpperCase();
-    if (name) name.textContent = App.currentUser.name || 'Pengguna';
-  } else {
-    if (badge) badge.style.display = 'none';
-    if (loginTrigger) loginTrigger.style.display = 'inline-flex';
-  }
+  if (badge) badge.style.display = 'flex';
+  if (loginTrigger) loginTrigger.style.display = 'none';
+  if (avatar) avatar.innerHTML = '<i data-lucide="smartphone" style="width: 14px; height: 14px;"></i>';
+  if (name) name.textContent = (App.currentUser && App.currentUser.name) || 'Perangkat Ini';
+  if (window.lucide) window.lucide.createIcons({ root: badge });
 }
 
 // ----------------------------------------------------------------------------
@@ -1505,26 +1528,72 @@ async function initApp() {
     }
   });
 
+  // Device Settings Modal Listeners
+  document.getElementById('userProfileBadge')?.addEventListener('click', openDeviceModal);
+  document.getElementById('btnDeviceSettings')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openDeviceModal();
+  });
+  document.getElementById('btnCloseDeviceModal')?.addEventListener('click', closeDeviceModal);
+  document.getElementById('btnCancelDeviceModal')?.addEventListener('click', closeDeviceModal);
+  document.getElementById('btnSaveDeviceModal')?.addEventListener('click', handleSaveDeviceName);
+  document.getElementById('btnResetDeviceData')?.addEventListener('click', handleResetDeviceData);
+
   // ==========================================================================
-  // CHECK AUTH STATE ON STARTUP
+  // INITIALIZE APPLICATION DIRECTLY (NO LOGIN REQUIRED - 100% DISTINCT PER DEVICE)
   // ==========================================================================
-  if (App.token) {
-    try {
-      const me = await api('/api/auth/me');
-      App.currentUser = me.user;
-      initRealtimeSync();
-      await fetchAllData();
-      renderAllViews();
-    } catch (err) {
-      console.warn('Initial session validation failed:', err.message);
-      handleSessionExpired();
-    }
-  } else {
-    renderAllViews();
-    openAuthModal('login');
-  }
+  ensureDeviceId();
+  initRealtimeSync();
+  await fetchAllData();
+  renderAllViews();
 
   if (window.lucide) window.lucide.createIcons();
+}
+
+// Device Modal Actions
+function openDeviceModal() {
+  const backdrop = document.getElementById('deviceModalBackdrop');
+  const inputName = document.getElementById('inputDeviceName');
+  const displayId = document.getElementById('displayDeviceId');
+  if (inputName) inputName.value = (App.currentUser && App.currentUser.name) || '';
+  if (displayId) displayId.value = App.deviceId || localStorage.getItem('sgt_device_id') || '';
+  if (backdrop) backdrop.classList.add('active');
+  if (window.lucide) window.lucide.createIcons();
+}
+
+function closeDeviceModal() {
+  document.getElementById('deviceModalBackdrop')?.classList.remove('active');
+}
+
+async function handleSaveDeviceName() {
+  const input = document.getElementById('inputDeviceName');
+  const newName = input ? input.value.trim() : '';
+  if (!newName) {
+    showToast('Nama perangkat tidak boleh kosong.', 'warning');
+    return;
+  }
+  localStorage.setItem('sgt_device_name', newName);
+  if (App.currentUser) App.currentUser.name = newName;
+  try {
+    await api('/api/device/profile', {
+      method: 'PUT',
+      body: JSON.stringify({ name: newName })
+    });
+  } catch (e) {
+    // Local update is already saved
+  }
+  renderHeaderUser();
+  closeDeviceModal();
+  showToast(`Nama perangkat disimpan: ${newName}`, 'success');
+}
+
+function handleResetDeviceData() {
+  if (confirm('Apakah Anda yakin ingin membuat profil perangkat baru? Perangkat ini akan mendapatkan daftar belanja dan dompet kas baru yang terpisah.')) {
+    const newId = 'dev_' + Math.random().toString(36).substring(2, 8) + Date.now().toString(36);
+    localStorage.setItem('sgt_device_id', newId);
+    localStorage.removeItem('sgt_device_name');
+    location.reload();
+  }
 }
 
 // Expose functions globally for HTML event handlers
@@ -1534,5 +1603,6 @@ window.openEditItemModal = openEditItemModal;
 window.promptDeleteItem = promptDeleteItem;
 window.switchTab = switchTab;
 window.openWalletModal = openWalletModal;
+window.openDeviceModal = openDeviceModal;
 
 document.addEventListener('DOMContentLoaded', initApp);

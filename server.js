@@ -488,12 +488,52 @@ function jsonResponse(res, statusCode, data) {
     'Content-Type': 'application/json; charset=utf-8',
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Device-Id'
   });
   res.end(JSON.stringify(data));
 }
 
 function authenticate(req) {
+  // 1. Direct device identification (NO LOGIN REQUIRED, 100% DISTINCT PER DEVICE)
+  const deviceHeader = req.headers['x-device-id'] || (req.url && new URL(req.url, 'http://localhost').searchParams.get('device_id'));
+  if (deviceHeader && String(deviceHeader).trim().length > 0) {
+    const deviceId = String(deviceHeader).trim();
+    let user = db.users.find(u => u.id === deviceId);
+    if (!user) {
+      // Auto-create distinct isolated profile for this device
+      user = {
+        id: deviceId,
+        name: 'Perangkat ' + (deviceId.length > 5 ? deviceId.slice(-4).toUpperCase() : deviceId),
+        email: deviceId + '@device.local',
+        salt: '',
+        password_hash: '',
+        created_at: new Date().toISOString()
+      };
+      db.users.push(user);
+
+      if (!db.budget_settings) db.budget_settings = [];
+      db.budget_settings.push({
+        user_id: deviceId,
+        budget_limit: 500000,
+        alert_caution_percent: 75,
+        alert_danger_percent: 90,
+        updated_at: new Date().toISOString()
+      });
+
+      if (!db.wallets) db.wallets = [];
+      db.wallets.push({
+        user_id: deviceId,
+        initial_cash: 500000,
+        current_cash: 500000,
+        updated_at: new Date().toISOString()
+      });
+
+      saveDatabase();
+    }
+    return { id: user.id, email: user.email, name: user.name };
+  }
+
+  // 2. Fallback to Bearer token for test suites or backwards compatibility
   const authHeader = req.headers['authorization'];
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return null;
@@ -515,7 +555,7 @@ const server = http.createServer(async (req, res) => {
   // CORS Preflight
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Device-Id');
 
   if (req.method === 'OPTIONS') {
     res.writeHead(204);
@@ -692,6 +732,49 @@ const server = http.createServer(async (req, res) => {
     return jsonResponse(res, 200, { user });
   }
 
+  // --------------------------------------------------------------------------
+  // DEVICE PROFILE ROUTES (NO-LOGIN DEVICE MANAGEMENT)
+  // --------------------------------------------------------------------------
+  if (pathname === '/api/device/profile' && req.method === 'GET') {
+    const user = authenticate(req);
+    if (!user) {
+      return jsonResponse(res, 401, { error: 'Perangkat tidak teridentifikasi.' });
+    }
+    const wallet = (db.wallets && db.wallets.find(w => w.user_id === user.id)) || { initial_cash: 500000, current_cash: 500000 };
+    const budget = (db.budget_settings && db.budget_settings.find(b => b.user_id === user.id)) || { budget_limit: 500000 };
+    const itemsCount = (db.grocery_items && db.grocery_items.filter(i => i.user_id === user.id).length) || 0;
+    return jsonResponse(res, 200, {
+      device: {
+        id: user.id,
+        name: user.name,
+        items_count: itemsCount,
+        wallet,
+        budget
+      }
+    });
+  }
+
+  if (pathname === '/api/device/profile' && req.method === 'PUT') {
+    const user = authenticate(req);
+    if (!user) {
+      return jsonResponse(res, 401, { error: 'Perangkat tidak teridentifikasi.' });
+    }
+    try {
+      const { name } = await parseBody(req);
+      if (name && name.trim()) {
+        const u = db.users.find(usr => usr.id === user.id);
+        if (u) {
+          u.name = name.trim();
+          saveDatabase();
+          return jsonResponse(res, 200, { message: 'Nama perangkat berhasil diperbarui!', device: { id: u.id, name: u.name } });
+        }
+      }
+      return jsonResponse(res, 400, { error: 'Nama perangkat tidak boleh kosong.' });
+    } catch (e) {
+      return jsonResponse(res, 500, { error: e.message });
+    }
+  }
+
   if (pathname === '/api/auth/forgot-password' && req.method === 'POST') {
     try {
       const { email } = await parseBody(req);
@@ -719,8 +802,17 @@ const server = http.createServer(async (req, res) => {
   // --------------------------------------------------------------------------
   if (pathname === '/api/sync/events' && req.method === 'GET') {
     const token = parsedUrl.searchParams.get('token');
-    const session = db.sessions.find(s => s.token === token && new Date(s.expires_at) > new Date());
-    if (!session) {
+    const deviceId = parsedUrl.searchParams.get('device_id');
+    let userId = null;
+
+    if (deviceId && deviceId.trim().length > 0) {
+      userId = deviceId.trim();
+    } else if (token) {
+      const session = db.sessions.find(s => s.token === token && new Date(s.expires_at) > new Date());
+      if (session) userId = session.user_id;
+    }
+
+    if (!userId) {
       res.writeHead(401, { 'Content-Type': 'text/plain' });
       res.end('Unauthorized');
       return;
@@ -734,7 +826,7 @@ const server = http.createServer(async (req, res) => {
     });
     res.write('event: connected\ndata: {"status":"connected"}\n\n');
 
-    registerSseClient(session.user_id, res);
+    registerSseClient(userId, res);
     return;
   }
 
@@ -775,14 +867,14 @@ const server = http.createServer(async (req, res) => {
       }
 
       // Option 1: Set specific amount of cash on hand
-      if (data.set_cash !== undefined) {
-        const val = Math.max(0, parseFloat(data.set_cash) || 0);
+      if (data.set_cash !== undefined || (data.action === 'set_cash' && data.amount !== undefined)) {
+        const val = Math.max(0, parseFloat(data.set_cash !== undefined ? data.set_cash : data.amount) || 0);
         wallet.initial_cash = val;
         wallet.current_cash = val;
       } 
       // Option 2: Add cash (Top up)
-      else if (data.add_cash !== undefined) {
-        const add = parseFloat(data.add_cash) || 0;
+      else if (data.add_cash !== undefined || (data.action === 'add_cash' && data.amount !== undefined)) {
+        const add = parseFloat(data.add_cash !== undefined ? data.add_cash : data.amount) || 0;
         wallet.initial_cash = (wallet.initial_cash || 0) + add;
         wallet.current_cash = Math.max(0, (wallet.current_cash || 0) + add);
       } 
@@ -984,8 +1076,11 @@ const server = http.createServer(async (req, res) => {
 
     try {
       const data = await parseBody(req);
-      const itemsSnapshot = Array.isArray(data.items_snapshot) ? data.items_snapshot : [];
-      const totalSpent = parseFloat(data.total_spent) || 0;
+      const itemsSnapshot = Array.isArray(data.items_snapshot) ? data.items_snapshot : db.grocery_items.filter(it => it.user_id === user.id);
+      let totalSpent = parseFloat(data.total_spent);
+      if (isNaN(totalSpent)) {
+        totalSpent = itemsSnapshot.reduce((acc, it) => acc + (parseFloat(it.price) || 0) * (parseFloat(it.quantity) || 1), 0);
+      }
       const storeName = data.store_name ? data.store_name.trim() : 'Supermarket';
 
       // ======================================================================
