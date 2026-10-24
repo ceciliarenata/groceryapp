@@ -230,6 +230,11 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
+  cursor: pointer;
+  transition: background var(--t-fast);
+}
+.budget-safety-bar:hover {
+  background: var(--c-primary-xlight);
 }
 
 .bsb-label {
@@ -409,6 +414,12 @@ body {
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-green);
+  cursor: pointer;
+  user-select: none;
+  transition: transform var(--t-fast), box-shadow var(--t-fast);
+}
+.wallet-hero:active {
+  transform: scale(0.985);
 }
 .wallet-hero::before {
   content: '';
@@ -442,20 +453,43 @@ body {
 }
 .wallet-edit-btn {
   background: rgba(255,255,255,.2);
-  border: none;
+  border: 1px solid rgba(255,255,255,.3);
   border-radius: var(--r-full);
   color: #fff;
   font-size: 11px;
   font-weight: 600;
-  padding: 4px 12px;
+  padding: 5px 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 5px;
-  transition: background var(--t-fast);
+  transition: background var(--t-fast), transform var(--t-fast);
 }
-.wallet-edit-btn:hover { background: rgba(255,255,255,.3); }
+.wallet-edit-btn:hover { background: rgba(255,255,255,.35); transform: translateY(-1px); }
+.wallet-edit-btn:active { transform: translateY(0); }
 .wallet-edit-btn svg { width: 12px; height: 12px; }
+
+/* Preset Chips */
+.preset-chip {
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-full);
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--c-text);
+  cursor: pointer;
+  transition: all var(--t-fast);
+  outline: none;
+}
+.preset-chip:hover {
+  background: var(--c-primary-xlight);
+  border-color: var(--c-primary);
+  color: var(--c-primary-dark);
+}
+.preset-chip:active {
+  transform: scale(0.95);
+}
 
 .wallet-amount {
   font-size: 32px;

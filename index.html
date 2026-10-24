@@ -75,15 +75,15 @@
     <div class="tab-view active" id="tabBelanja">
 
       <!-- Wallet Hero Card -->
-      <div class="wallet-hero" id="walletHeroCard">
+      <div class="wallet-hero" id="walletHeroCard" title="Ketuk untuk mengubah uang belanja" role="button" tabindex="0">
         <div class="wallet-top">
           <span class="wallet-label">💰 Uang Belanja Saya</span>
           <button class="wallet-edit-btn" id="editWalletBtn">
-            <i data-lucide="edit-3"></i> Ubah
+            <i data-lucide="edit-3"></i> Ubah Nominal
           </button>
         </div>
         <div class="wallet-amount" id="walletCurrentAmount">Rp 0</div>
-        <div class="wallet-sub" id="walletSubText">Sisa dari Rp 0 awal</div>
+        <div class="wallet-sub" id="walletSubText">Sisa dari Rp 0 awal &bull; <span style="text-decoration: underline; opacity: 0.9;">Ketuk untuk ubah</span></div>
         <div class="wallet-stats">
           <div class="wallet-stat">
             <div class="wallet-stat-label">Total Keranjang</div>
@@ -235,6 +235,14 @@
           <label class="form-label">Batas Anggaran (Rp)</label>
           <input type="number" class="form-control big" id="budgetLimitInput"
                  placeholder="500000" min="0" inputmode="numeric">
+        </div>
+        <!-- Preset Chips -->
+        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px;" id="budgetPresets">
+          <button type="button" class="preset-chip" data-val="300000">300 rb</button>
+          <button type="button" class="preset-chip" data-val="500000">500 rb</button>
+          <button type="button" class="preset-chip" data-val="750000">750 rb</button>
+          <button type="button" class="preset-chip" data-val="1000000">1 Jt</button>
+          <button type="button" class="preset-chip" data-val="2000000">2 Jt</button>
         </div>
         <div class="form-row">
           <div class="form-group">
@@ -395,6 +403,14 @@
         <label class="form-label" id="walletInputLabel">Total Uang yang Dibawa (Rp)</label>
         <input type="number" class="form-control big" id="walletAmountInput"
                placeholder="500000" min="0" inputmode="numeric">
+      </div>
+      <!-- Preset Chips -->
+      <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px;" id="walletPresets">
+        <button type="button" class="preset-chip" data-val="100000">100 rb</button>
+        <button type="button" class="preset-chip" data-val="250000">250 rb</button>
+        <button type="button" class="preset-chip" data-val="500000">500 rb</button>
+        <button type="button" class="preset-chip" data-val="1000000">1 Jt</button>
+        <button type="button" class="preset-chip" data-val="2000000">2 Jt</button>
       </div>
       <div style="background: var(--c-bg); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px;">
         <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600;">

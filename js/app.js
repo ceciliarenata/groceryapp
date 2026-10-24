@@ -460,10 +460,13 @@ function renderBudgetTab() {
   setText('budgetPctLabel',  pct.toFixed(1) + '% terpakai');
   setText('budgetSpentLabel', `${rp(cart)} dari ${rp(limit)}`);
 
-  // Sync inputs
-  setVal('budgetLimitInput',   limit);
-  setVal('budgetCautionInput', State.settings.cautionPct);
-  setVal('budgetDangerInput',  State.settings.dangerPct);
+  // Sync inputs only when not being actively edited by user
+  const blInp = document.getElementById('budgetLimitInput');
+  const bcInp = document.getElementById('budgetCautionInput');
+  const bdInp = document.getElementById('budgetDangerInput');
+  if (blInp && document.activeElement !== blInp) setVal('budgetLimitInput', limit);
+  if (bcInp && document.activeElement !== bcInp) setVal('budgetCautionInput', State.settings.cautionPct);
+  if (bdInp && document.activeElement !== bdInp) setVal('budgetDangerInput', State.settings.dangerPct);
 
   // Category breakdown
   renderCategoryBreakdown();
@@ -691,11 +694,19 @@ function deleteItem() {
 // WALLET
 // ─────────────────────────────────────────────────────────────────────────────
 function openWalletModal() {
-  setVal('walletAmountInput', '');
-  setText('walletCurrentDisplay', rp(State.wallet.current));
-  setText('walletAfterPreview', rp(State.wallet.current));
+  const currentVal = State.wallet.current || 0;
+  setVal('walletAmountInput', currentVal > 0 ? currentVal : '');
+  setText('walletCurrentDisplay', rp(currentVal));
+  setText('walletAfterPreview', rp(currentVal));
   switchWalletMode('set');
   openModal('walletModal');
+  setTimeout(() => {
+    const inp = document.getElementById('walletAmountInput');
+    if (inp) {
+      inp.focus();
+      inp.select();
+    }
+  }, 250);
 }
 
 function switchWalletMode(mode) {
@@ -705,24 +716,40 @@ function switchWalletMode(mode) {
     add: 'Jumlah yang Ditambah (Rp)',
     sub: 'Jumlah yang Dikurangi (Rp)',
   };
-  setText('walletInputLabel', labels[mode]);
+  setText('walletInputLabel', labels[mode] || labels.set);
   document.querySelectorAll('.wallet-mode-tab').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.mode === mode);
   });
+  if (mode === 'set') {
+    const cur = State.wallet.current || 0;
+    setVal('walletAmountInput', cur > 0 ? cur : '');
+  } else {
+    setVal('walletAmountInput', '');
+  }
   updateWalletPreview();
 }
 
 function updateWalletPreview() {
-  const amount = parseFloat(getVal('walletAmountInput')) || 0;
+  const raw = getVal('walletAmountInput');
+  const amount = parseFloat(raw) || 0;
   let after = State.wallet.current;
-  if (State.walletMode === 'set') after = amount;
-  else if (State.walletMode === 'add') after = State.wallet.current + amount;
-  else if (State.walletMode === 'sub') after = State.wallet.current - amount;
+  if (State.walletMode === 'set') {
+    after = raw === '' ? State.wallet.current : amount;
+  } else if (State.walletMode === 'add') {
+    after = State.wallet.current + amount;
+  } else if (State.walletMode === 'sub') {
+    after = State.wallet.current - amount;
+  }
   setText('walletAfterPreview', rp(after));
 }
 
 function saveWallet() {
-  const amount = parseFloat(getVal('walletAmountInput')) || 0;
+  const raw = getVal('walletAmountInput');
+  if (raw === '' || isNaN(Number(raw))) {
+    toast('Silakan masukkan jumlah uang yang valid!', 'error');
+    return;
+  }
+  const amount = parseFloat(raw);
   let newVal = State.wallet.current;
 
   if (State.walletMode === 'set') {
@@ -731,18 +758,20 @@ function saveWallet() {
     State.wallet.current = amount;
     newVal = amount;
   } else if (State.walletMode === 'add') {
+    if (amount <= 0) { toast('Jumlah yang ditambah harus lebih dari 0', 'error'); return; }
     State.wallet.current += amount;
     State.wallet.initial  = Math.max(State.wallet.initial, State.wallet.current);
     newVal = State.wallet.current;
   } else if (State.walletMode === 'sub') {
-    State.wallet.current -= amount;
+    if (amount <= 0) { toast('Jumlah yang dikurangi harus lebih dari 0', 'error'); return; }
+    State.wallet.current = Math.max(0, State.wallet.current - amount);
     newVal = State.wallet.current;
   }
 
   saveAndSync();
   renderAll();
   closeModal('walletModal');
-  toast(`💰 Uang belanja diperbarui: ${rp(newVal)}`);
+  toast(`💰 Uang belanja berhasil disimpan: ${rp(newVal)}!`);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -967,13 +996,45 @@ function bindEvents() {
   document.getElementById('itemQty')?.addEventListener('input', updateItemSubtotalPreview);
   document.getElementById('itemPrice')?.addEventListener('input', updateItemSubtotalPreview);
 
-  // Wallet modal
-  document.getElementById('editWalletBtn')?.addEventListener('click', openWalletModal);
+  // Wallet modal & Hero Card tap
+  document.getElementById('editWalletBtn')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openWalletModal();
+  });
+  document.getElementById('walletHeroCard')?.addEventListener('click', () => {
+    openWalletModal();
+  });
   document.getElementById('walletModalClose')?.addEventListener('click', () => closeModal('walletModal'));
   document.getElementById('walletSaveBtn')?.addEventListener('click', saveWallet);
   document.getElementById('walletAmountInput')?.addEventListener('input', updateWalletPreview);
   document.querySelectorAll('.wallet-mode-tab').forEach(btn => {
     btn.addEventListener('click', () => switchWalletMode(btn.dataset.mode));
+  });
+
+  // Wallet preset chips
+  document.querySelectorAll('#walletPresets .preset-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const val = btn.dataset.val;
+      if (val) {
+        setVal('walletAmountInput', val);
+        updateWalletPreview();
+      }
+    });
+  });
+
+  // Top Budget Safety Bar tap -> opens Anggaran tab
+  document.getElementById('budgetSafetyBar')?.addEventListener('click', () => {
+    switchTab('Anggaran');
+  });
+
+  // Budget preset chips
+  document.querySelectorAll('#budgetPresets .preset-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const val = btn.dataset.val;
+      if (val) {
+        setVal('budgetLimitInput', val);
+      }
+    });
   });
 
   // Checkout
